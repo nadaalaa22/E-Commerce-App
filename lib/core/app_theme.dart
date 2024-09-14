@@ -21,8 +21,12 @@ final appTheme = ThemeData(
       color: Colors.purple,
     ),
     bodyLarge: TextStyle(
-      fontSize: 16.0,
+      fontSize: 20.0,
       color: Colors.grey[800],
+    ),
+    bodyMedium: TextStyle(
+      fontSize: 16.0,
+      color: Colors.grey,
     ),
   ),
   progressIndicatorTheme: ProgressIndicatorThemeData(color: primaryColor),
