@@ -14,7 +14,7 @@ void main() async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
-  await AuthinticationRemoteDsImpl().signOut();
+  //await AuthinticationRemoteDsImpl().signOut();
  // await AuthenticationImp().signIn("nada@gmail.com", "123456789");
   runApp(
       MultiBlocProvider(

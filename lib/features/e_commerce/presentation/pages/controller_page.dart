@@ -41,12 +41,7 @@ class _ControllerPageState extends State<ControllerPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text(
-          "Title of the app",
-          style: appTheme.textTheme.displayLarge,
-        ),
-      ),
+
       body: _getSelectedPage(),
       bottomNavigationBar: ResponsiveNavigationBar(
         selectedIndex: _selectedIndex,

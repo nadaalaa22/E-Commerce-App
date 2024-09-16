@@ -4,33 +4,37 @@ class UserModel {
   final String name;
   final String userId;
   final String email;
-  final String? phoneNumber; // رقم الهاتف اختياري
-  final String? address; // العنوان اختياري
+  final String? phone; // اختياري
+  final String? address; // اختياري
+  final int? age; // اختياري
 
   UserModel({
     required this.name,
     required this.userId,
     required this.email,
-    this.phoneNumber,
+    this.phone,
     this.address,
+    this.age,
   });
 
   Map<String, dynamic> toMap() => {
     'name': name,
     'userId': userId,
     'email': email,
-    'phoneNumber': phoneNumber,
+    'phone': phone,
     'address': address,
+    'age': age,
   };
 
   factory UserModel.fromDocumentSnapshot(DocumentSnapshot<Map<String, dynamic>> doc) {
     print('${doc.id} from testing docId');
     return UserModel(
       name: doc.data()?['name'] ?? '',
-      userId: doc.id, // Use the document ID as the user ID
+      userId: doc.id,
       email: doc.data()?['email'] ?? '',
-      phoneNumber: doc.data()?['phoneNumber'],
+      phone: doc.data()?['phone'],
       address: doc.data()?['address'],
+      age: doc.data()?['age'],
     );
   }
 
@@ -38,20 +42,22 @@ class UserModel {
     String? name,
     String? userId,
     String? email,
-    String? phoneNumber,
+    String? phone,
     String? address,
+    int? age,
   }) {
     return UserModel(
       name: name ?? this.name,
       userId: userId ?? this.userId,
       email: email ?? this.email,
-      phoneNumber: phoneNumber ?? this.phoneNumber,
+      phone: phone ?? this.phone,
       address: address ?? this.address,
+      age: age ?? this.age,
     );
   }
 
   @override
   String toString() {
-    return 'UserModel{name: $name, id: $userId, email: $email, phoneNumber: $phoneNumber, address: $address}';
+    return 'UserModel{name: $name, id: $userId, email: $email, phone: $phone, address: $address, age: $age}';
   }
 }
