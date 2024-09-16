@@ -15,7 +15,7 @@ final appTheme = ThemeData(
     primary: primaryColor,
   ),
   textTheme: TextTheme(
-    displayLarge: TextStyle(
+    displayLarge: const TextStyle(
       fontSize: 24.0,
       fontWeight: FontWeight.bold,
       color: Colors.purple,
@@ -24,7 +24,7 @@ final appTheme = ThemeData(
       fontSize: 20.0,
       color: Colors.grey[800],
     ),
-    bodyMedium: TextStyle(
+    bodyMedium: const TextStyle(
       fontSize: 16.0,
       color: Colors.grey,
     ),

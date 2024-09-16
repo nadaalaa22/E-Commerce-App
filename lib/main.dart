@@ -1,5 +1,6 @@
 import 'package:e_commerce_app/features/auth/presentation/pages/login_page.dart';
 import 'package:e_commerce_app/features/auth/presentation/pages/splash_page.dart';
+import 'package:e_commerce_app/features/e_commerce/presentation/pages/product_page.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -17,17 +18,17 @@ void main() async {
     options: DefaultFirebaseOptions.currentPlatform,
   );
 
-  await AuthenticationImp().signOut() ;
-  runApp(
-      MultiBlocProvider(
-        providers: [
-          BlocProvider<AuthenticationBloc>(create: (context) => AuthenticationBloc(AuthenticationImp(),UserDBModelImp(dbHelper:RemoteDbHelperImpl()))),
-          BlocProvider<UserDataBloc>(create: (context) => UserDataBloc(UserDBModelImp(dbHelper:RemoteDbHelperImpl()))),
-
-        ],
-        child: MyApp(),
-      )
-  );
+  runApp(MultiBlocProvider(
+    providers: [
+      BlocProvider<AuthenticationBloc>(
+          create: (context) => AuthenticationBloc(AuthenticationImp(),
+              UserDBModelImp(dbHelper: RemoteDbHelperImpl()))),
+      BlocProvider<UserDataBloc>(
+          create: (context) =>
+              UserDataBloc(UserDBModelImp(dbHelper: RemoteDbHelperImpl()))),
+    ],
+    child: MyApp(),
+  ));
 }
 
 class MyApp extends StatelessWidget {
@@ -37,14 +38,12 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-        useMaterial3: true,
-      ),
-      debugShowCheckedModeBanner: false,
-      home: LoginPage()
-    );
+        title: 'Flutter Demo',
+        theme: ThemeData(
+          colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+          useMaterial3: true,
+        ),
+        debugShowCheckedModeBanner: false,
+        home: ProductPage());
   }
 }
-
