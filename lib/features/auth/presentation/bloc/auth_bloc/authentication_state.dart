@@ -1,16 +1,17 @@
 part of 'authentication_bloc.dart';
 
-@immutable
-abstract class AuthenticationState {}
+abstract class AuthState {}
 
-class LoadingState extends AuthenticationState {}
+class UserUnauthorized extends AuthState {}
 
-class Authorized extends AuthenticationState {}
+class UserAuthLoadingState extends AuthState {} //طالما في Future
 
-class UnAuthorized extends AuthenticationState {}
+class UserAuthorizedState extends AuthState {}
 
-class AuthError extends AuthenticationState {
+class UserAnonymousState extends AuthState {}
+
+class UserErrorState extends AuthState {
   final String error;
 
-  AuthError({required this.error});
+  UserErrorState({required this.error});
 }

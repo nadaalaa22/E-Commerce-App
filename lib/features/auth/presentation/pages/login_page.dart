@@ -1,4 +1,4 @@
-import 'package:firebase_auth/firebase_auth.dart';
+import 'package:e_commerce_app/features/auth/presentation/pages/sign_up_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -8,7 +8,10 @@ import '../../../../core/app_theme.dart';
 import '../../../e_commerce/presentation/pages/controller_page.dart';
 import '../../data/model/auth_model.dart';
 import '../bloc/auth_bloc/authentication_bloc.dart';
-import 'sign_up_page.dart';
+import '../bloc/user_data_bloc/user_data_bloc.dart';
+
+
+
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -27,7 +30,7 @@ class _LoginPageState extends State<LoginPage> {
 
   @override
   void initState() {
-    context.read<AuthenticationBloc>().add(CheckIfAuthEvent());
+    context.read<AuthBloc>().add(CheckIfAuth());
     super.initState();
   }
 
@@ -37,21 +40,22 @@ class _LoginPageState extends State<LoginPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(),
-      body: BlocConsumer<AuthenticationBloc, AuthenticationState>(
-        listener: (BuildContext context, AuthenticationState state) {
-          if (state is Authorized ) {
+      body: BlocConsumer<AuthBloc, AuthState>(
+        listener: (BuildContext context, AuthState state) {
+          if (state is UserAuthorizedState ) {
+            context.read<UserBloc>().add(GetUserEvent());
             Navigator.pushReplacement(
                 context,
                 MaterialPageRoute(
-                    builder: (context) => ControllerPage()));
+                    builder: (context) => const ControllerPage()));
           }
-          if (state is AuthError) {
-            // showToast("An error occurred: ${state.error}");
+          if (state is UserErrorState) {
+            showToast("An error occurred: ${state.error}");
           }
         },
         builder: (context, state) {
           print(state);
-          if (state is LoadingState) {
+          if (state is UserAuthLoadingState) {
             return const Center(child: CircularProgressIndicator());
           }
 
@@ -66,9 +70,9 @@ class _LoginPageState extends State<LoginPage> {
                       children: [
                         Center(
                           child: SvgPicture.asset(
-                            'assets/images/login.svg', // Replace with the actual path to your SVG file
-                            width: 200.0, // Adjust the width as needed
-                            height: 200.0, // Adjust the height as needed
+                            'assets/images/login.svg',
+                            width: 200.0,
+                            height: 200.0,
                           ),
                         ),
                         const Text(
@@ -126,7 +130,7 @@ class _LoginPageState extends State<LoginPage> {
                               icon: Icon(
                                 flag
                                     ? Icons.visibility
-                                    : Icons.visibility_off, // Toggle icon
+                                    : Icons.visibility_off,
                               ),
                             ),
                           ),
@@ -158,11 +162,13 @@ class _LoginPageState extends State<LoginPage> {
                           child: MaterialButton(
                             onPressed: () {
                               if (keyLogin.currentState!.validate()) {
-                                context.read<AuthenticationBloc>().add(
-                                    SignInEvent(
-                                        email: email.text,
-                                        password: password.text));
+                                AuthModel userModel = AuthModel(
+                                    password: password.text, email: email.text);
+                                context
+                                    .read<AuthBloc>()
+                                    .add(SignIn(userModel: userModel));
                               }
+
                             },
                             child: const Text(
                               'Login',
@@ -174,28 +180,34 @@ class _LoginPageState extends State<LoginPage> {
                         const SizedBox(
                           height: 20.0,
                         ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            const Text(
-                              'Don\'t have an account?',
-                              style:
-                              TextStyle(fontSize: 18, fontFamily: 'MyFont'),
+                        Center(
+                          child: SingleChildScrollView(
+                            scrollDirection: Axis.horizontal,
+
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                const Text(
+                                  'Don\'t have an account?',
+                                  style:
+                                  TextStyle(fontSize: 18, fontFamily: 'MyFont'),
+                                ),
+                                TextButton(
+                                  onPressed: () {
+                                    Navigator.pushReplacement(
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: (_) => SignUpPage()));
+                                  },
+                                  child: Text('Register now ',
+                                      style: TextStyle(
+                                          fontSize: 18,
+                                          color: primaryColor,
+                                          fontFamily: 'MyFont')),
+                                )
+                              ],
                             ),
-                            TextButton(
-                              onPressed: () {
-                                Navigator.pushReplacement(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (_) => SignUpPage()));
-                              },
-                              child: Text('Register now ',
-                                  style: TextStyle(
-                                      fontSize: 18,
-                                      color: primaryColor,
-                                      fontFamily: 'MyFont')),
-                            )
-                          ],
+                          ),
                         ),
                         const SizedBox(
                           height: 10.0,
@@ -212,3 +224,16 @@ class _LoginPageState extends State<LoginPage> {
     );
   }
 }
+void showToast(String message) {
+  Fluttertoast.showToast(
+    msg: message,
+    toastLength: Toast.LENGTH_SHORT,
+    gravity: ToastGravity.CENTER,
+    timeInSecForIosWeb: 1,
+    backgroundColor: Colors.red,
+    textColor: Colors.white,
+    fontSize: 16.0,
+  );
+}
+
+

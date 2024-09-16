@@ -1,54 +1,100 @@
+import 'dart:convert';
+
 import 'package:firebase_auth/firebase_auth.dart';
 
-abstract class AuthenticationRemoteDS {
-  ///
-  Future<void> signUp(String email, String password);
+import '../../model/auth_model.dart';
 
-  ///
-  Future<void> signIn(String email, String password);
 
-  ///
+abstract class AuthinticationRemoteDs {
+  Future<void> signIn(AuthModel userModel);
+  Future<void> signUp(AuthModel userModel);
   Future<void> signOut();
-
-  ///
   bool checkIfAuth();
-
-  /// New method to reset password
-  Future<void> resetPassword(String email);
+  String getUserId();
+  bool checkUserSignInStatus();
 }
 
-class AuthenticationImp implements AuthenticationRemoteDS {
-  final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
-
+class AuthinticationRemoteDsImpl extends AuthinticationRemoteDs {
   @override
-  bool checkIfAuth() => _firebaseAuth.currentUser != null;
-
-  @override
-  Future<void> signIn(String email, String password) async {
-    await _firebaseAuth.signInWithEmailAndPassword(
-      email: email,
-      password: password,
-    );
+  Future<UserCredential?> signIn(AuthModel userModel) async {
+    try {
+      UserCredential userCredential = await FirebaseAuth.instance.signInWithEmailAndPassword(
+        email: userModel.email,
+        password: userModel.password,
+      );
+      print('User signed in successfully: ${userCredential.user?.uid}');
+      return userCredential;
+    } on FirebaseAuthException catch (e) {
+      if (e.code == 'user-not-found') {
+        print('No user found for that email.');
+      } else if (e.code == 'wrong-password') {
+        print('Wrong password provided for that user.');
+      } else if (e.code == 'invalid-email') {
+        print('The email address is badly formatted.');
+      } else {
+        print('Error during sign-in: ${e.message}');
+      }
+      return null;
+    } catch (e) {
+      print('Unexpected error: $e');
+      return null;
+    }
   }
+
+  @override
+  Future<void> signUp(AuthModel userModel) async {
+    try {
+      final UserCredential credential = await FirebaseAuth.instance.createUserWithEmailAndPassword(
+        email: userModel.email,
+        password: userModel.password,
+      );
+      print('User signed up successfully with ID: ${credential.user?.uid}');
+    } on FirebaseAuthException catch (e) {
+      if (e.code == 'weak-password') {
+        print('The password provided is too weak.');
+      } else if (e.code == 'email-already-in-use') {
+        print('The account already exists for that email.');
+      } else if (e.code == 'invalid-email') {
+        print('The email address is badly formatted.');
+      } else {
+        print('Error during sign-up: ${e.message}');
+      }
+    } catch (e) {
+      print('Unexpected error: $e');
+    }
+  }
+
+
+  @override
+  bool checkIfAuth() => FirebaseAuth.instance.currentUser != null;
 
   @override
   Future<void> signOut() async {
-    await _firebaseAuth.signOut();
+    print('signout');
+    await FirebaseAuth.instance.signOut();
+    print('after signout');
+  }
+  @override
+  String getUserId() {
+    final user = FirebaseAuth.instance.currentUser;
+    if (user != null) {
+      return user.uid;
+    }
+    return throw Exception('the user did\'t sign in');
   }
 
-  @override
-  Future<void> signUp(String email, String password) async {
-    await _firebaseAuth.createUserWithEmailAndPassword(
-      email: email,
-      password: password,
-    );
-    print("sign up done ");
-  }
-
-
 
   @override
-  Future<void> resetPassword(String email) async {
-    await _firebaseAuth.sendPasswordResetEmail(email: email);
+  bool checkUserSignInStatus() {
+    FirebaseAuth auth = FirebaseAuth.instance;
+    User? user = auth.currentUser;
+
+    if (user != null) {
+      print("User is signed in!");
+      return user.isAnonymous;
+    } else {
+      print("User is signed out.");
+      return false;
+    }
   }
 }

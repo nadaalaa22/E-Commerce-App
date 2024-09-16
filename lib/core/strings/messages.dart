@@ -1,1 +1,0 @@
-const ADD_SUCCESS_MESSAGE = "Post Added Successfully";

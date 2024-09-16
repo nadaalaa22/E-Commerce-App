@@ -1,29 +1,20 @@
+
 part of 'authentication_bloc.dart';
 
 @immutable
-abstract class AuthenticationEvent {}
+abstract class AuthEvent {}
 
-class SignInEvent extends AuthenticationEvent {
-  final String email, password;
-
-  SignInEvent({required this.email, required this.password});
+class SignIn extends AuthEvent {
+  final AuthModel userModel;
+  SignIn({required this.userModel});
 }
 
-class SignUpEvent extends AuthenticationEvent {
-  final String email, password;
+class SignUp extends AuthEvent {
+  final AuthModel authModel;
   final UserModel userModel;
-
-  SignUpEvent(this.userModel, {required this.email, required this.password});
+  SignUp({required this.authModel, required this.userModel});
 }
 
-class SignOutEvent extends AuthenticationEvent {}
+class SignOut extends AuthEvent {}
 
-class CheckIfAuthEvent extends AuthenticationEvent {}
-
-class SendUserVerification extends AuthenticationEvent {}
-
-class ResetPasswordEvent extends AuthenticationEvent {
-  final String email;
-
-  ResetPasswordEvent(this.email);
-}
+class CheckIfAuth extends AuthEvent {}

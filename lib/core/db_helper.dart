@@ -1,6 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-
 abstract class RemoteDbHelper {
   Future<void> add(
       String collectionName,
@@ -10,15 +9,13 @@ abstract class RemoteDbHelper {
   Future<void> update(
       String collectionName, String docId, Map<String, dynamic> data);
   Future<void> delete(String collectionName, String docId);
+
   Future<List> get(String collectionName, Function dTOConverter);
 }
-
-class RemoteDbHelperImpl extends RemoteDbHelper {
+class RemoteDbHelperImp implements RemoteDbHelper {
   @override
-  Future<void> add(String collectionName, Map<String, dynamic> data,
-      {String? documentId}) async {
-    final CollectionReference collection =
-    FirebaseFirestore.instance.collection(collectionName);
+  Future<void> add(String collectionName, Map<String, dynamic> data, {String? documentId}) async {
+    final CollectionReference collection = FirebaseFirestore.instance.collection(collectionName);
 
     if (documentId != null) {
       await collection.doc(documentId).set(data);
@@ -32,17 +29,12 @@ class RemoteDbHelperImpl extends RemoteDbHelper {
       FirebaseFirestore.instance.collection(collectionName).doc(docId).delete();
 
   @override
-  Future<List> get(String collectionName, Function dTOConverter) async {
-    final snapshot =
-    await FirebaseFirestore.instance.collection(collectionName).get();
-    return snapshot.docs.map((e) => dTOConverter(e)).toList();
+  Future<List> get(String collectionName, Function dToConverter) async {
+    final snapshot = await FirebaseFirestore.instance.collection(collectionName).get();
+    return snapshot.docs.map((doc) => dToConverter(doc)).toList(); // Ensure this returns a list
   }
 
   @override
-  Future<void> update(
-      String collectionName, String docId, Map<String, dynamic> data) =>
-      FirebaseFirestore.instance
-          .collection(collectionName)
-          .doc(docId)
-          .update(data);
+  Future<void> update(String collectionName, String docId, Map<String, dynamic> data) =>
+      FirebaseFirestore.instance.collection(collectionName).doc(docId).update(data);
 }

@@ -2,9 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
 import '../../../../core/app_theme.dart';
+import '../../../e_commerce/presentation/pages/controller_page.dart';
+import '../../data/model/auth_model.dart';
 import '../../data/model/user_model.dart';
 import '../bloc/auth_bloc/authentication_bloc.dart';
-import '../bloc/user_data_bloc/user_data_bloc.dart';
+
+
 import 'login_page.dart';
 
 class SignUpPage extends StatefulWidget {
@@ -79,23 +82,23 @@ class _SignUpPageState extends State<SignUpPage> {
                     decoration: const InputDecoration(
                       hintText: 'Email',
                       border: OutlineInputBorder(),
-                      prefixIcon:  const Icon(
+                      prefixIcon: Icon(
                         Icons.email,
                       ),
                     ),
                     validator: (text) {
-                      if (text!.isEmpty) {
-                        return 'field can not be null';
+                      if (text == null || text.isEmpty) {
+                        return 'Email field cannot be empty';
                       }
-                      if (text.length < 6 ||
-                          !text.contains('@') ||
-                          !text.endsWith('.com') ||
-                          text.startsWith('@')) {
-                        return 'Wrong data ';
-                      } else
-                        return null;
+                      // Regular expression for validating an email
+                      final emailRegex = RegExp(r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$');
+                      if (!emailRegex.hasMatch(text)) {
+                        return 'Please enter a valid email address';
+                      }
+                      return null;
                     },
                   ),
+
                   const SizedBox(
                     height: 15.0,
                   ),
@@ -146,18 +149,26 @@ class _SignUpPageState extends State<SignUpPage> {
                       ),
                     ),
                     child: MaterialButton(
-                      onPressed: () async {
+                      onPressed: () {
                         if (GlobalKeyForm.currentState!.validate()) {
-                          UserModel userModel =
-                          UserModel(name: name.text, id:'') ;
-                          context.read<AuthenticationBloc>().add(SignUpEvent(
-                              email: email.text, password: password.text , userModel));
-                          // User? user = await FirebaseAuth.instance.currentUser;
-                          context
-                              .read<UserDataBloc>()
-                              .add(SetUserEvent(userModel: userModel));
+                          String sanitizedEmail = email.text.trim();
+                          String sanitizedName = name.text.trim();
+                          String sanitizedPassword = password.text.trim();
+
+                          AuthModel authModel = AuthModel(
+                            password: sanitizedPassword,
+                            email: sanitizedEmail,
+                          );
+
+                          UserModel userModel = UserModel(name: sanitizedName, userId: '', email: sanitizedEmail);
+
+                          context.read<AuthBloc>().add(SignUp(authModel: authModel, userModel: userModel));
+                          Navigator.pushReplacement(context, MaterialPageRoute(builder: (_)=> ControllerPage()));
                         }
                       },
+
+
+
                       child: const Text(
                         'Sign up',
                         style: TextStyle(
@@ -171,29 +182,34 @@ class _SignUpPageState extends State<SignUpPage> {
                   const SizedBox(
                     height: 20.0,
                   ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      const Text(
-                        'Already have an account ? ',
-                        style: TextStyle(
-                          fontSize: 18,
-                        ),
-                      ),
-                      TextButton(
-                        onPressed: () {
-                          Navigator.pushReplacement(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (_) => const LoginPage()));
-                        },
-                        child: const Text('Login now ',
+                  Center(
+                    child: SingleChildScrollView(
+                      scrollDirection: Axis.horizontal,
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          const Text(
+                            'Already have an account ? ',
                             style: TextStyle(
                               fontSize: 18,
-                              color: Color(0xff6C63FF),
-                            )),
-                      )
-                    ],
+                            ),
+                          ),
+                          TextButton(
+                            onPressed: () {
+                              Navigator.pushReplacement(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (_) => const LoginPage()));
+                            },
+                            child: const Text('Login now ',
+                                style: TextStyle(
+                                  fontSize: 18,
+                                  color: Color(0xff6C63FF),
+                                )),
+                          )
+                        ],
+                      ),
+                    ),
                   ),
                 ],
               ),

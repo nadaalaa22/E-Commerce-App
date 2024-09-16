@@ -1,71 +1,77 @@
 import 'dart:async';
-
 import 'package:bloc/bloc.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/material.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:meta/meta.dart';
-import '../../../../../core/app_theme.dart';
 import '../../../data/datasorce/authentication_remote_ds/authentication.dart';
 import '../../../data/datasorce/user_remote_ds/user_remote_ds.dart';
+import '../../../data/model/auth_model.dart';
 import '../../../data/model/user_model.dart';
-
 
 part 'authentication_event.dart';
 part 'authentication_state.dart';
 
-class AuthenticationBloc extends Bloc<AuthenticationEvent, AuthenticationState> {
-  final AuthenticationRemoteDS authenticationRemoteDS;
-  final UsersDBModel usersDBModel;
+class AuthBloc extends Bloc<AuthEvent, AuthState> {
+  final AuthinticationRemoteDs authinticationRemoteDs;
+  final UsersRemoteDs usersDBModel;
 
-  AuthenticationBloc(this.authenticationRemoteDS, this.usersDBModel)
-      : super(UnAuthorized()) {
-    on<AuthenticationEvent>((event, emit) async {
+  AuthBloc({required this.usersDBModel, required this.authinticationRemoteDs})
+      : super(UserUnauthorized()) {
+    on<AuthEvent>((event, emit) async {
+      print(event); // Debugging: Print the event
       try {
-        if (event is SignInEvent) {
-          emit(LoadingState());
-          await authenticationRemoteDS.signIn(event.email, event.password);
-          emit(Authorized()) ;
-        } else if (event is SignUpEvent) {
-          emit(LoadingState());
-          await authenticationRemoteDS.signUp(event.email, event.password);
-          await usersDBModel.addUser(event.userModel);
-          emit(UnAuthorized());
-        } else if (event is SignOutEvent) {
-          emit(LoadingState());
-          await authenticationRemoteDS.signOut();
-          emit(UnAuthorized());
-        } else if (event is CheckIfAuthEvent) {
-          emit(LoadingState());
-          bool isAuth = authenticationRemoteDS.checkIfAuth();
-          print('Is Authenticated: $isAuth');
-          emit(isAuth ? Authorized() : UnAuthorized());
+        if (event is SignUp) {
+          emit(UserAuthLoadingState());
+          await authinticationRemoteDs.signUp(event.authModel);
+
+          // Ensure the user ID is fetched correctly
+          final String userId = authinticationRemoteDs.getUserId();
+          print('User signed up with ID: $userId');
+
+          // Create a new UserModel with the correct user ID
+          UserModel updatedUserModel = event.userModel.copyWith(userId: userId);
+
+          // Add user to Firestore with the correct user ID
+          await usersDBModel.addUser(updatedUserModel);
+
+          print('User added to Firestore successfully');
+          emit(UserAuthorizedState());
         }
-        else if(event is ResetPasswordEvent){
-          emit(LoadingState());
-          await authenticationRemoteDS.resetPassword(event.email);
-          emit(UnAuthorized());
-          Fluttertoast.showToast(
-            msg: "Password reset email sent!",
-            toastLength: Toast.LENGTH_SHORT,
-            gravity: ToastGravity.BOTTOM,
-            backgroundColor: Colors.deepPurple,
-            textColor: Colors.black,
-            fontSize: 16.0,
-          );
+        else if (event is SignIn) {
+          emit(UserAuthLoadingState());
+          await authinticationRemoteDs.signIn(event.userModel);
+
+          if (authinticationRemoteDs.checkIfAuth()) {
+            emit(UserAuthorizedState());
+          } else {
+            emit(UserUnauthorized());
+          }
+        } else if (event is CheckIfAuth) {
+          emit(UserAuthLoadingState());
+          final bool isSignedIn = authinticationRemoteDs.checkIfAuth();
+          final bool isAnonymous = authinticationRemoteDs.checkUserSignInStatus();
+
+          if (isSignedIn && isAnonymous) {
+            emit(UserAnonymousState());
+          } else if (isSignedIn) {
+            emit(UserAuthorizedState());
+          } else {
+            emit(UserUnauthorized());
+          }
+        } else if (event is SignOut) {
+          emit(UserAuthLoadingState());
+          await authinticationRemoteDs.signOut();
+          emit(UserUnauthorized());
         }
-      } catch (error) {
-        Fluttertoast.showToast(
-          msg: 'Invalid Data, Please try again',
-          toastLength: Toast.LENGTH_SHORT,
-          gravity: ToastGravity.BOTTOM,
-          timeInSecForIosWeb: 1,
-          backgroundColor: Colors.white,
-          textColor: Colors.red,
-          fontSize: 16.0,
-        );
-        emit(AuthError(error: error.toString()));
+      }catch (e) {
+        print('Error in AuthBloc: $e'); // Debugging: Print the error
+        if (e is TypeError) {
+          print('Type Error details: ${e.toString()}'); // Additional debugging for type errors
+        }
+        emit(UserErrorState(
+            error: 'Please enter your credentials correctly or sign up.'));
       }
+
+
     });
   }
 }

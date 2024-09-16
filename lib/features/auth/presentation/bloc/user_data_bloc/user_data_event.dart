@@ -1,14 +1,12 @@
 part of 'user_data_bloc.dart';
 
 @immutable
-abstract class UserDataEvent {}
+abstract class UserEvent {}
 
-class SetUserEvent extends UserDataEvent {
-  final UserModel userModel ;
+class SetUserEvent extends UserEvent {
+  final UserModel userModel;
 
   SetUserEvent({required this.userModel});
-
 }
 
-class GetUserEvent extends UserDataEvent {
-}
+class GetUserEvent extends UserEvent {}
