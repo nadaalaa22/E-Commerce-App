@@ -7,7 +7,6 @@ import 'package:responsive_navigation_bar/responsive_navigation_bar.dart';
 
 import '../../../../core/app_theme.dart';
 
-
 class ControllerPage extends StatefulWidget {
   const ControllerPage({Key? key}) : super(key: key);
 
@@ -42,6 +41,12 @@ class _ControllerPageState extends State<ControllerPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        title: Text(
+          "Title of the app",
+          style: appTheme.textTheme.displayLarge,
+        ),
+      ),
       body: _getSelectedPage(),
       bottomNavigationBar: ResponsiveNavigationBar(
         selectedIndex: _selectedIndex,

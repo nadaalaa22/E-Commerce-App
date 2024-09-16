@@ -15,14 +15,18 @@ final appTheme = ThemeData(
     primary: primaryColor,
   ),
   textTheme: TextTheme(
-    displayLarge: TextStyle(
+    displayLarge: const TextStyle(
       fontSize: 24.0,
       fontWeight: FontWeight.bold,
       color: Colors.purple,
     ),
     bodyLarge: TextStyle(
-      fontSize: 16.0,
+      fontSize: 20.0,
       color: Colors.grey[800],
+    ),
+    bodyMedium: const TextStyle(
+      fontSize: 16.0,
+      color: Colors.grey,
     ),
   ),
   progressIndicatorTheme: ProgressIndicatorThemeData(color: primaryColor),
