@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:e_commerce_app/features/auth/data/model/user_model.dart';
 import 'package:e_commerce_app/features/auth/presentation/bloc/auth_bloc/authentication_bloc.dart';
+import 'package:e_commerce_app/features/e_commerce/presentation/pages/reset_password_page.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter/material.dart';
@@ -112,51 +113,83 @@ class _ContactPageState extends State<ContactPage> {
                         const SizedBox(height: 25.0),
                         Visibility(
                           visible: editable,
-                          child: Center(
-                            child: Container(
-                              width: double.infinity,
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(10),
-                                gradient: LinearGradient(
-                                  colors: [primaryColor, secondaryColor],
-                                  begin: Alignment.topLeft,
-                                  end: Alignment.bottomRight,
+                          child: Column(
+                            children: [
+                              Center(
+                                child: Container(
+                                  width: double.infinity,
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(10),
+                                    gradient: LinearGradient(
+                                      colors: [primaryColor, secondaryColor],
+                                      begin: Alignment.topLeft,
+                                      end: Alignment.bottomRight,
+                                    ),
+                                  ),
+                                  child: MaterialButton(
+                                    onPressed: () async {
+                                      if (globalKeyForm.currentState!.validate()) {
+                                        UserModel updatedUser = userModel.copyWith(
+                                          name: nameController.text,
+                                          phone: phoneController.text.isNotEmpty ? phoneController.text : null,
+                                          address: addressController.text.isNotEmpty ? addressController.text : null,
+                                          age: ageController.text.isNotEmpty ? int.parse(ageController.text) : null,
+                                        );
+                              
+                                        // Update user data in Firestore
+                                        await FirebaseFirestore.instance
+                                            .collection('users')
+                                            .doc(updatedUser.userId)
+                                            .update(updatedUser.toMap());
+                              
+                                        ScaffoldMessenger.of(context).showSnackBar(
+                                          const SnackBar(
+                                            content: Text('Changes Saved Successfully'),
+                                            duration: Duration(seconds: 2),
+                                          ),
+                                        );
+                              
+                                        setState(() {
+                                          editable = false;
+                                          editIcon = const Icon(Icons.edit);
+                                          editToolTip = "Edit Info";
+                                        });
+                                      }
+                                    },
+                                    child: const Text(
+                                      'Save',
+                                      style: TextStyle(color: Colors.white, fontSize: 24),
+                                    ),
+                                  ),
                                 ),
                               ),
-                              child: MaterialButton(
-                                onPressed: () async {
-                                  if (globalKeyForm.currentState!.validate()) {
-                                    UserModel updatedUser = userModel.copyWith(
-                                      name: nameController.text,
-                                      phone: phoneController.text.isNotEmpty ? phoneController.text : null,
-                                      address: addressController.text.isNotEmpty ? addressController.text : null,
-                                      age: ageController.text.isNotEmpty ? int.parse(ageController.text) : null,
-                                    );
-
-                                    // Update user data in Firestore
-                                    await FirebaseFirestore.instance
-                                        .collection('users')
-                                        .doc(updatedUser.userId)
-                                        .update(updatedUser.toMap());
-
-                                    ScaffoldMessenger.of(context).showSnackBar(
-                                      const SnackBar(
-                                        content: Text('Changes Saved Successfully'),
-                                        duration: Duration(seconds: 2),
-                                      ),
-                                    );
-
-                                    setState(() {
-                                      editable = false;
-                                      editIcon = const Icon(Icons.edit);
-                                      editToolTip = "Edit Info";
-                                    });
-                                  }
-                                },
-                                child: const Text(
-                                  'Save',
-                                  style: TextStyle(color: Colors.white, fontSize: 24),
-                                ),
+                              SizedBox(height: 25,)
+                            ],
+                          ),
+                        ),
+                        Center(
+                          child: Container(
+                            width: double.infinity,
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(10),
+                              gradient: LinearGradient(
+                                colors: [primaryColor, secondaryColor],
+                                begin: Alignment.topLeft,
+                                end: Alignment.bottomRight,
+                              ),
+                            ),
+                            child: MaterialButton(
+                              onPressed: () {
+                                Navigator.push(
+                                  context, 
+                                  MaterialPageRoute(
+                                    builder: (context) => ResetPasswordPage()
+                                  )
+                                );
+                              },
+                              child: const Text(
+                                'Reset Password',
+                                style: TextStyle(color: Colors.white, fontSize: 24),
                               ),
                             ),
                           ),
@@ -173,25 +206,26 @@ class _ContactPageState extends State<ContactPage> {
     );
   }
 
-  Widget buildTextField(TextEditingController controller, String label, {bool enabled = true, TextInputType keyboardType = TextInputType.text, String? Function(String?)? validator}) {
-    return TextFormField(
-      controller: controller,
-      enabled: enabled,
-      keyboardType: keyboardType,
-      decoration: InputDecoration(
-        label: Text(label, style: appTheme.textTheme.bodyMedium),
-        floatingLabelStyle: TextStyle(color: primaryColor),
-        iconColor: secondaryColor,
-        focusedBorder: OutlineInputBorder(
-          borderSide: BorderSide(color: secondaryColor),
-          borderRadius: BorderRadius.circular(8),
-        ),
-        border: OutlineInputBorder(
-          borderSide: BorderSide(color: primaryColor),
-          borderRadius: BorderRadius.circular(8),
-        ),
+}
+
+Widget buildTextField(TextEditingController controller, String label, {bool enabled = true, TextInputType keyboardType = TextInputType.text, String? Function(String?)? validator}) {
+  return TextFormField(
+    controller: controller,
+    enabled: enabled,
+    keyboardType: keyboardType,
+    decoration: InputDecoration(
+      label: Text(label, style: appTheme.textTheme.bodyMedium),
+      floatingLabelStyle: TextStyle(color: primaryColor),
+      iconColor: secondaryColor,
+      focusedBorder: OutlineInputBorder(
+        borderSide: BorderSide(color: secondaryColor),
+        borderRadius: BorderRadius.circular(8),
       ),
-      validator: validator,
-    );
-  }
+      border: OutlineInputBorder(
+        borderSide: BorderSide(color: primaryColor),
+        borderRadius: BorderRadius.circular(8),
+      ),
+    ),
+    validator: validator,
+  );
 }
