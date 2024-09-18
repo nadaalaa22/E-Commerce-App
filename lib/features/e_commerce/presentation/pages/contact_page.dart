@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:e_commerce_app/core/networks/network_info.dart';
 import 'package:e_commerce_app/features/auth/data/datasorce/authentication_remote_ds/authentication.dart';
 import 'package:e_commerce_app/features/auth/data/model/user_model.dart';
 import 'package:e_commerce_app/features/auth/presentation/bloc/auth_bloc/authentication_bloc.dart';
@@ -7,6 +8,7 @@ import 'package:e_commerce_app/features/e_commerce/presentation/pages/reset_pass
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:e_commerce_app/core/app_theme.dart';
+import 'package:internet_connection_checker/internet_connection_checker.dart';
 import 'package:lottie/lottie.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -54,7 +56,7 @@ class _ContactPageState extends State<ContactPage> {
                           onPressed: () async {
                             Navigator.pop(context);
                             // context.read<AuthBloc>().add(SignOut());
-                            await AuthenticationRemoteDsImpl().signOut();
+                            await AuthenticationRemoteDsImpl(networkInfo: NetworkInfoImpl(connectionChecker: InternetConnectionChecker())).signOut();
                             Navigator.pushReplacement(
                               context,
                               MaterialPageRoute(
