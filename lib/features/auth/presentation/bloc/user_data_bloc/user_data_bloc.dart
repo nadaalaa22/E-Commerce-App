@@ -14,7 +14,7 @@ part 'user_data_state.dart';
 
 class UserBloc extends Bloc<UserEvent, UserState> {
   final UsersRemoteDs usersDBModel;
-  final AuthinticationRemoteDs authinticationRemoteDs;
+  final AuthenticationRemoteDs authinticationRemoteDs;
   UserBloc({required this.usersDBModel, required this.authinticationRemoteDs})
       : super(UserDataInitial()) {
     on<UserEvent>((event, emit) async {

@@ -1,12 +1,14 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:e_commerce_app/features/auth/data/datasorce/authentication_remote_ds/authentication.dart';
 import 'package:e_commerce_app/features/auth/data/model/user_model.dart';
 import 'package:e_commerce_app/features/auth/presentation/bloc/auth_bloc/authentication_bloc.dart';
+import 'package:e_commerce_app/features/auth/presentation/pages/login_page.dart';
 import 'package:e_commerce_app/features/e_commerce/presentation/pages/reset_password_page.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:e_commerce_app/core/app_theme.dart';
 import 'package:lottie/lottie.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 class ContactPage extends StatefulWidget {
   const ContactPage({super.key});
@@ -33,6 +35,59 @@ class _ContactPageState extends State<ContactPage> {
             style: appTheme.textTheme.displayLarge,
           ),
         ),
+        actions: [
+          PopupMenuButton<String>(
+            onSelected: (value) {
+              if (value == 'Logout'){
+                showDialog(
+                  context: context,
+                  builder: (BuildContext context) {
+                    return AlertDialog(
+                      title: Text('Logout'),
+                      content: Text('Are you sure you want to log out?'),
+                      actions: [
+                        TextButton(
+                          onPressed: () => Navigator.pop(context),
+                          child: Text('Cancel'),
+                        ),
+                        TextButton(
+                          onPressed: () async {
+                            Navigator.pop(context);
+                            // context.read<AuthBloc>().add(SignOut());
+                            await AuthenticationRemoteDsImpl().signOut();
+                            Navigator.pushReplacement(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => LoginPage()
+                              )
+                            );
+                          },
+                          child: Text('Logout'),
+                        ),
+                      ],
+                    );
+                  },
+                );
+              }
+              else if (value == 'Reset Password'){
+                Navigator.push(
+                  context, 
+                  MaterialPageRoute(
+                    builder: (context) => ResetPasswordPage()
+                  )
+                );
+              }
+            },
+            itemBuilder: (BuildContext context) {
+              return {'Reset Password', 'Logout'}.map((String choice) {
+                return PopupMenuItem<String>(
+                  value: choice,
+                  child: Text(choice),
+                );
+              }).toList();
+            },
+          ),
+        ],
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -167,33 +222,6 @@ class _ContactPageState extends State<ContactPage> {
                             ],
                           ),
                         ),
-                        Center(
-                          child: Container(
-                            width: double.infinity,
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(10),
-                              gradient: LinearGradient(
-                                colors: [primaryColor, secondaryColor],
-                                begin: Alignment.topLeft,
-                                end: Alignment.bottomRight,
-                              ),
-                            ),
-                            child: MaterialButton(
-                              onPressed: () {
-                                Navigator.push(
-                                  context, 
-                                  MaterialPageRoute(
-                                    builder: (context) => ResetPasswordPage()
-                                  )
-                                );
-                              },
-                              child: const Text(
-                                'Reset Password',
-                                style: TextStyle(color: Colors.white, fontSize: 24),
-                              ),
-                            ),
-                          ),
-                        ),
                       ],
                     ),
                   ),
@@ -208,12 +236,14 @@ class _ContactPageState extends State<ContactPage> {
 
 }
 
-Widget buildTextField(TextEditingController controller, String label, {bool enabled = true, TextInputType keyboardType = TextInputType.text, String? Function(String?)? validator}) {
+Widget buildTextField(TextEditingController controller, String label, {bool enabled = true, bool obscureText = false, TextInputType keyboardType = TextInputType.text, String? Function(String?)? validator,Widget? suffixIcon}) {
   return TextFormField(
     controller: controller,
     enabled: enabled,
+    obscureText: obscureText,
     keyboardType: keyboardType,
     decoration: InputDecoration(
+      suffixIcon: suffixIcon,
       label: Text(label, style: appTheme.textTheme.bodyMedium),
       floatingLabelStyle: TextStyle(color: primaryColor),
       iconColor: secondaryColor,
