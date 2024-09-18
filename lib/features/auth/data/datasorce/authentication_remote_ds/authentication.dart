@@ -5,7 +5,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import '../../model/auth_model.dart';
 
 
-abstract class AuthinticationRemoteDs {
+abstract class AuthenticationRemoteDs {
   Future<void> signIn(AuthModel userModel);
   Future<void> signUp(AuthModel userModel);
   Future<void> signOut();
@@ -14,7 +14,7 @@ abstract class AuthinticationRemoteDs {
   bool checkUserSignInStatus();
 }
 
-class AuthinticationRemoteDsImpl extends AuthinticationRemoteDs {
+class AuthenticationRemoteDsImpl extends AuthenticationRemoteDs {
   @override
   Future<UserCredential?> signIn(AuthModel userModel) async {
     try {

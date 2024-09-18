@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:e_commerce_app/features/auth/data/datasorce/authentication_remote_ds/authentication.dart';
 import 'package:e_commerce_app/features/auth/data/model/user_model.dart';
 import 'package:e_commerce_app/features/auth/presentation/bloc/auth_bloc/authentication_bloc.dart';
 import 'package:e_commerce_app/features/auth/presentation/pages/login_page.dart';
@@ -52,7 +53,8 @@ class _ContactPageState extends State<ContactPage> {
                         TextButton(
                           onPressed: () async {
                             Navigator.pop(context);
-                            context.read<AuthBloc>().add(SignOut());
+                            // context.read<AuthBloc>().add(SignOut());
+                            await AuthenticationRemoteDsImpl().signOut();
                             Navigator.pushReplacement(
                               context,
                               MaterialPageRoute(
@@ -221,35 +223,8 @@ class _ContactPageState extends State<ContactPage> {
                           ),
                         ),
                       ],
-                      ),
                     ),
-                //   Center(
-                //     child: Container(
-                //       width: double.infinity,
-                //       decoration: BoxDecoration(
-                //         borderRadius: BorderRadius.circular(10),
-                //         gradient: LinearGradient(
-                //           colors: [primaryColor, secondaryColor],
-                //           begin: Alignment.topLeft,
-                //           end: Alignment.bottomRight,
-                //         ),
-                //       ),
-                //       child: MaterialButton(
-                //         onPressed: () {
-                //           Navigator.push(
-                //             context, 
-                //             MaterialPageRoute(
-                //               builder: (context) => ResetPasswordPage()
-                //             )
-                //           );
-                //         },
-                //         child: const Text(
-                //           'Reset Password',
-                //           style: TextStyle(color: Colors.white, fontSize: 24),
-                //         ),
-                //       ),
-                //     ),
-                //   ),
+                  ),
                 ],
               ),
             );

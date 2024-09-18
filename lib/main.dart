@@ -22,11 +22,11 @@ void main() async {
           BlocProvider(
               create: (_) => AuthBloc(
                   usersDBModel: UsersRemoteDsImp(),
-                  authinticationRemoteDs: AuthinticationRemoteDsImpl())),
+                  authenticationRemoteDs: AuthenticationRemoteDsImpl())),
           BlocProvider(
               create: (_) => UserBloc(
                   usersDBModel: UsersRemoteDsImp(),
-                  authinticationRemoteDs: AuthinticationRemoteDsImpl())),
+                  authinticationRemoteDs: AuthenticationRemoteDsImpl())),
         ],
         child: MyApp(),
       )
