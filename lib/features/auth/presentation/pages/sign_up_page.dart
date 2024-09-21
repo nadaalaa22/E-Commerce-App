@@ -7,7 +7,6 @@ import '../../../e_commerce/presentation/pages/controller_page.dart';
 import '../../data/model/auth_model.dart';
 import '../../data/model/user_model.dart';
 import '../bloc/auth_bloc/authentication_bloc.dart';
-
 import 'login_page.dart';
 
 class SignUpPage extends StatefulWidget {

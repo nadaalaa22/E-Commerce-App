@@ -1,6 +1,7 @@
 import 'package:e_commerce_app/core/networks/network_info.dart';
 import 'package:e_commerce_app/features/auth/presentation/pages/login_page.dart';
 import 'package:e_commerce_app/features/auth/presentation/pages/splash_page.dart';
+import 'package:e_commerce_app/features/e_commerce/presentation/pages/home_page.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -49,7 +50,8 @@ class MyApp extends StatelessWidget {
         useMaterial3: true,
       ),
       debugShowCheckedModeBanner: false,
-      home: LoginPage()
+      home: Home()
+      //LoginPage()
     );
   }
 }

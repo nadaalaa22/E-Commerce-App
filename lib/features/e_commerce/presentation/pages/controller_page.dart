@@ -26,7 +26,7 @@ class _ControllerPageState extends State<ControllerPage> {
   Widget _getSelectedPage() {
     switch (_selectedIndex) {
       case 0:
-        return HomePage();
+        return Home();
       case 1:
         return ProductPage();
       case 2:
@@ -34,7 +34,7 @@ class _ControllerPageState extends State<ControllerPage> {
       case 3:
         return ContactPage();
       default:
-        return HomePage();
+        return Home();
     }
   }
 
