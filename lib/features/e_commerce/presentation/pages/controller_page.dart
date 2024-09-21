@@ -1,3 +1,4 @@
+import 'package:e_commerce_app/features/e_commerce/presentation/pages/cart_page.dart';
 import 'package:e_commerce_app/features/e_commerce/presentation/pages/contact_page.dart';
 import 'package:e_commerce_app/features/e_commerce/presentation/pages/fav_page.dart';
 import 'package:e_commerce_app/features/e_commerce/presentation/pages/home_page.dart';
@@ -28,7 +29,7 @@ class _ControllerPageState extends State<ControllerPage> {
       case 0:
         return HomePage();
       case 1:
-        return ProductPage();
+        return CartPage();
       case 2:
         return FavPage();
       case 3:
