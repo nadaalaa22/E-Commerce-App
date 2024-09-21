@@ -45,7 +45,7 @@ class ProductState extends State<Product> {
                 ),
                 IconButton(color: Colors.red,
                   onPressed: () {}, // to be added in favourite screen //
-                  icon: Image.asset('assets/favorites.png'),
+                  icon: Image.asset('assets/images/favorites.png'),
                 ),
               ],
             ),

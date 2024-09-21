@@ -11,8 +11,10 @@ import 'features/auth/data/datasorce/user_remote_ds/user_remote_ds.dart';
 import 'features/auth/presentation/bloc/auth_bloc/authentication_bloc.dart';
 import 'features/auth/presentation/bloc/user_data_bloc/user_data_bloc.dart';
 import 'firebase_options.dart';
+import 'package:e_commerce_app/features/Api/domain/getIt.dart';
 
 void main() async {
+  await setLocator();
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,

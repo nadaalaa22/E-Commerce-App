@@ -10,7 +10,6 @@ import 'package:e_commerce_app/features/Api/homeRepo/homeRepo_impl.dart';
 import 'package:get_it/get_it.dart';
 import 'package:http/http.dart';
 
-
 final GetIt locator=GetIt.instance;
 
 Future<void> setLocator() async {

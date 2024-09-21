@@ -32,9 +32,9 @@ class _HomeTabState extends State<Home> {
   late Timer _timer;
 
   final List<String> adsImages = [
-    'assets/CarouselSlider1.png',
-    'assets/CarouselSlider2.png',
-    'assets/CarouselSlider3.png',
+    'assets/images/CarouselSlider1.png',
+    'assets/images/CarouselSlider2.png',
+    'assets/images/CarouselSlider3.png',
   ];
 
   @override
@@ -66,7 +66,7 @@ class _HomeTabState extends State<Home> {
     return Scaffold(
       appBar: AppBar(
         surfaceTintColor:secondaryColor,
-        title: Image.asset('assets/route.png'),
+        title: Image.asset('assets/images/route.png'),
         elevation: 0,
       ),
       body: GestureDetector(
@@ -83,7 +83,7 @@ class _HomeTabState extends State<Home> {
                       decoration: InputDecoration(
                         prefixIcon: IconButton(
                           onPressed: () {},
-                          icon: Image.asset('assets/search.png'),
+                          icon: Image.asset('assets/images/search.png'),
                         ),
                         hintText: 'What do you search for?',
                         hintStyle: TextStyle(color: primaryColor),
@@ -108,7 +108,7 @@ class _HomeTabState extends State<Home> {
                   ),
                   IconButton(
                     onPressed: () {}, // Navigation to cart screen //
-                    icon: Image.asset('assets/cart.png'),
+                    icon: Image.asset('assets/images/cart.png'),
                   )
                 ],
               ),
