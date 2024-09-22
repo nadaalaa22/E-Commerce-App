@@ -1,4 +1,4 @@
-import 'package:e_commerce_app/features/e_commerce/presentation/cart_page.dart';
+import 'package:e_commerce_app/features/e_commerce/presentation/pages/cart_page.dart';
 import 'package:e_commerce_app/features/e_commerce/presentation/pages/contact_page.dart';
 import 'package:e_commerce_app/features/e_commerce/presentation/pages/fav_page.dart';
 import 'package:e_commerce_app/features/e_commerce/presentation/pages/home_page.dart';

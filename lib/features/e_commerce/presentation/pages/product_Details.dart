@@ -1,5 +1,9 @@
 import 'package:e_commerce_app/features/Api/response/ProductDM.dart';
+import 'package:e_commerce_app/features/e_commerce/presentation/pages/cart_page.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 class ProductDetails extends StatefulWidget {
   final ProductDM product;
@@ -10,13 +14,18 @@ class ProductDetails extends StatefulWidget {
   });
 
   @override
-  // ignore: library_private_types_in_public_api
   _ProductDetailsState createState() => _ProductDetailsState();
 }
 
 class _ProductDetailsState extends State<ProductDetails> {
   int _counter = 1;
   num _totalPrice = 0.0;
+
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  late final CollectionReference _cartItemsCollection = _firestore
+      .collection('users')
+      .doc('currentUserUid')
+      .collection('cartItems');
 
   void _incrementCounter() {
     setState(() {
@@ -57,12 +66,22 @@ class _ProductDetailsState extends State<ProductDetails> {
         ),
         title: const Text('Product Details'),
         centerTitle: true,
-        actions: const [
-          Icon(
-            Icons.shopping_cart,
-            size: 25,
+        actions: [
+          GestureDetector(
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => CartPage(),
+                ),
+              );
+            },
+            child: const Icon(
+              Icons.shopping_cart,
+              size: 25,
+            ),
           ),
-          SizedBox(
+          const SizedBox(
             width: 30,
           )
         ],
@@ -209,7 +228,52 @@ class _ProductDetailsState extends State<ProductDetails> {
                                   ),
                                 ),
                                 ElevatedButton(
-                                  onPressed: () {},
+                                  onPressed: () async {
+                                    final userId =
+                                        FirebaseAuth.instance.currentUser!.uid;
+
+                                    final cartItemsCollection = _firestore
+                                        .collection('users')
+                                        .doc(userId)
+                                        .collection('cartItems');
+
+                                    final querySnapshot =
+                                        await cartItemsCollection
+                                            .where('productId',
+                                                isEqualTo: widget.product.id)
+                                            .get();
+
+                                    if (querySnapshot.docs.isNotEmpty) {
+                                      Fluttertoast.showToast(
+                                        msg: "Product already exists in cart",
+                                        toastLength: Toast.LENGTH_SHORT,
+                                        gravity: ToastGravity.BOTTOM,
+                                        timeInSecForIosWeb: 1,
+                                        backgroundColor:
+                                            const Color(0xff035696),
+                                        textColor: Colors.white,
+                                        fontSize: 15.0,
+                                      );
+                                    } else {
+                                      await cartItemsCollection.add({
+                                        'productId': widget.product.id,
+                                        'title': widget.product.title,
+                                        'price': widget.product.price,
+                                        'quantity': _counter,
+                                      });
+
+                                      Fluttertoast.showToast(
+                                        msg: "Product Added to Cart",
+                                        toastLength: Toast.LENGTH_SHORT,
+                                        gravity: ToastGravity.BOTTOM,
+                                        timeInSecForIosWeb: 1,
+                                        backgroundColor:
+                                            const Color(0xff035696),
+                                        textColor: Colors.white,
+                                        fontSize: 15.0,
+                                      );
+                                    }
+                                  },
                                   style: ElevatedButton.styleFrom(
                                     backgroundColor: const Color(0xff035696),
                                   ),
@@ -220,7 +284,7 @@ class _ProductDetailsState extends State<ProductDetails> {
                                       color: Colors.white,
                                     ),
                                   ),
-                                ),
+                                )
                               ],
                             ),
                           ],
