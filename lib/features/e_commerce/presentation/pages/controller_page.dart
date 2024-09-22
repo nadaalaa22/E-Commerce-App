@@ -28,7 +28,7 @@ class _ControllerPageState extends State<ControllerPage> {
       case 0:
         return Home();
       case 1:
-        return ProductPage();
+        return Home();
       case 2:
         return FavPage();
       case 3:
@@ -41,7 +41,6 @@ class _ControllerPageState extends State<ControllerPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-
       body: _getSelectedPage(),
       bottomNavigationBar: ResponsiveNavigationBar(
         selectedIndex: _selectedIndex,

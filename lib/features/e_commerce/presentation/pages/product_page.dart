@@ -1,9 +1,13 @@
 import 'package:e_commerce_app/core/app_theme.dart';
+import 'package:e_commerce_app/features/Api/response/ProductDM.dart';
 import 'package:flutter/material.dart';
 
 class ProductPage extends StatefulWidget {
+  final ProductDM product;
+
   const ProductPage({
     super.key,
+    required this.product,
   });
 
   @override
@@ -13,10 +17,12 @@ class ProductPage extends StatefulWidget {
 
 class _ProductPageState extends State<ProductPage> {
   int _counter = 1;
+  num _totalPrice = 0.0;
 
   void _incrementCounter() {
     setState(() {
       _counter++;
+      _totalPrice = _counter * (widget.product.price ?? 0);
     });
   }
 
@@ -24,135 +30,109 @@ class _ProductPageState extends State<ProductPage> {
     setState(() {
       if (_counter > 1) {
         _counter--;
+        _totalPrice = _counter * (widget.product.price ?? 0);
       }
     });
   }
 
   @override
+  void initState() {
+    super.initState();
+    _totalPrice = widget.product.price ?? 0;
+  }
+
+  @override
   Widget build(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width;
+    final screenHeight = MediaQuery.of(context).size.height;
+
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: primaryColor,
+        backgroundColor: const Color(0xff035696),
         foregroundColor: Colors.white,
-        leading: const Icon(Icons.arrow_back),
-        title: const Text(
-          "Product Details",
-          style: TextStyle(
-            fontSize: 20,
-          ),
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          onPressed: () {
+            Navigator.pop(context);
+          },
         ),
+        title: const Text('Product Details'),
         centerTitle: true,
         actions: const [
-          Icon(
-            Icons.search,
-            size: 25,
-          ),
-          SizedBox(
-            width: 10,
-          ),
           Icon(
             Icons.shopping_cart,
             size: 25,
           ),
           SizedBox(
-            width: 10,
+            width: 30,
           )
         ],
       ),
       body: SingleChildScrollView(
         child: Column(
           children: [
-            // Image
             SizedBox(
-              height: 150,
-              child: Image.asset('assets/images/shoose.png'),
+              height: screenHeight * 0.2,
+              child: Image.network(
+                widget.product.images!.first,
+                fit: BoxFit.cover,
+              ),
             ),
-            // Product details
             Padding(
               padding: const EdgeInsets.all(16.0),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Row(
+                  Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Text(
-                        'Nike Air Jordon',
-                        style: TextStyle(
-                          fontSize: 15,
-                          fontWeight: FontWeight.bold,
+                      Expanded(
+                        child: Text(
+                          widget.product.title.toString(),
+                          style: TextStyle(
+                            fontSize: screenWidth * 0.04,
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
                       ),
                       Text(
-                        'EGP 3,500',
+                        '\$${widget.product.price}',
                         style: TextStyle(
-                          fontSize: 15,
+                          fontSize: screenWidth * 0.04,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
                     ],
                   ),
-                  const SizedBox(height: 8),
+                  SizedBox(height: screenHeight * 0.02),
                   Row(
                     children: [
                       Container(
-                        padding: const EdgeInsets.all(8),
+                        padding: const EdgeInsets.all(10),
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(30),
                           border:
                               Border.all(color: Colors.grey[500]!, width: 1),
                         ),
-                        child: const Text(
-                          '3,230 Sold',
+                        child: Text(
+                          '${widget.product.sold} Sold',
                           style: TextStyle(
-                            fontSize: 16,
+                            fontSize: screenWidth * 0.035,
                           ),
                         ),
                       ),
                       const SizedBox(
                         width: 20,
                       ),
-                      const Icon(Icons.star, color: Colors.amber),
-                      const Text('4.8 (7,500)'),
-                      const SizedBox(
-                        width: 40,
-                      ),
-                      Container(
-                        height: 40, // Set the height to 40 pixels
-                        decoration: BoxDecoration(
-                          color: primaryColor,
-                          borderRadius: BorderRadius.circular(50.0),
-                        ),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            IconButton(
-                              onPressed: _decrementCounter,
-                              icon: const Icon(
-                                Icons.remove_circle_outline,
-                                size: 20,
-                              ),
-                              color: Colors.white,
-                            ),
-                            Text(
-                              '$_counter',
-                              style: const TextStyle(
-                                  fontSize: 16, color: Colors.white),
-                            ),
-                            IconButton(
-                              onPressed: _incrementCounter,
-                              icon: const Icon(
-                                Icons.add_circle_outline,
-                                size: 20,
-                              ),
-                              color: Colors.white,
-                            ),
-                          ],
-                        ),
+                      Row(
+                        children: [
+                          const Icon(Icons.star, color: Colors.amber),
+                          Text('${widget.product.ratingsAverage}'),
+                        ],
                       ),
                     ],
                   ),
-                  const SizedBox(height: 16),
+                  SizedBox(height: screenHeight * 0.04),
                   const Text(
                     'Description',
                     style: TextStyle(
@@ -160,85 +140,91 @@ class _ProductPageState extends State<ProductPage> {
                       fontWeight: FontWeight.bold,
                     ),
                   ),
-                  const SizedBox(height: 5),
-                  const Text(
-                    'Nike is a multinational corporation that designs, develops, and sells athletic footwear, apparel, and accessories. ',
-                    style: TextStyle(fontSize: 13),
+                  SizedBox(height: screenHeight * 0.01),
+                  Text(
+                    widget.product.description.toString(),
+                    style: TextStyle(fontSize: screenWidth * 0.030),
                   ),
-                  const SizedBox(height: 16),
-                  const Text(
-                    'Size',
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  const SizedBox(height: 5),
-                  Wrap(
-                    spacing: 8.0, // Add spacing between buttons
-                    children: [
-                      _buildSizeButton(38),
-                      _buildSizeButton(39),
-                      _buildSizeButton(40),
-                      _buildSizeButton(41),
-                      _buildSizeButton(42),
-                    ],
-                  ),
-                  const SizedBox(height: 16),
-                  const Text(
-                    'Color',
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  const SizedBox(height: 8),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: [
-                      _buildColorButton(Colors.black),
-                      _buildColorButton(Colors.red, selected: true),
-                      _buildColorButton(Colors.blue),
-                      _buildColorButton(Colors.green),
-                      _buildColorButton(Colors.pink),
-                    ],
-                  ),
-                  const SizedBox(height: 16),
+                  SizedBox(height: screenHeight * 0.04),
                   Row(
                     children: [
-                      const Expanded(
+                      Expanded(
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text(
-                              'Total price',
-                              style: TextStyle(
-                                fontSize: 18,
-                                fontWeight: FontWeight.bold,
-                              ),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                const Text(
+                                  'Total price',
+                                  style: TextStyle(
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                                Container(
+                                  height: screenHeight * 0.05,
+                                  decoration: BoxDecoration(
+                                    color: const Color(0xff035696),
+                                    borderRadius: BorderRadius.circular(50.0),
+                                  ),
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      IconButton(
+                                        onPressed: _decrementCounter,
+                                        icon: const Icon(
+                                          Icons.remove_circle_outline,
+                                          size: 20,
+                                        ),
+                                        color: Colors.white,
+                                      ),
+                                      Text(
+                                        '$_counter',
+                                        style: TextStyle(
+                                            fontSize: screenWidth * 0.035,
+                                            color: Colors.white),
+                                      ),
+                                      IconButton(
+                                        onPressed: _incrementCounter,
+                                        icon: const Icon(
+                                          Icons.add_circle_outline,
+                                          size: 20,
+                                        ),
+                                        color: Colors.white,
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ],
                             ),
-                            SizedBox(height: 5),
-                            Text(
-                              'EGP 3,500',
-                              style: TextStyle(
-                                fontSize: 15,
-                                fontWeight: FontWeight.bold,
-                              ),
+                            SizedBox(height: screenHeight * 0.01),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(
+                                  '\$${_totalPrice.toStringAsFixed(2)}',
+                                  style: TextStyle(
+                                    fontSize: screenWidth * 0.035,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                                ElevatedButton(
+                                  onPressed: () {},
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: const Color(0xff035696),
+                                  ),
+                                  child: const Text(
+                                    'Add to cart',
+                                    style: TextStyle(
+                                      fontSize: 18,
+                                      color: Colors.white,
+                                    ),
+                                  ),
+                                ),
+                              ],
                             ),
                           ],
-                        ),
-                      ),
-                      ElevatedButton(
-                        onPressed: () {},
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: primaryColor,
-                        ),
-                        child: const Text(
-                          'Add to cart',
-                          style: TextStyle(
-                            fontSize: 18,
-                            color: Colors.white,
-                          ),
                         ),
                       ),
                     ],
@@ -248,30 +234,6 @@ class _ProductPageState extends State<ProductPage> {
             ),
           ],
         ),
-      ),
-    );
-  }
-
-  Widget _buildSizeButton(int size) {
-    return ElevatedButton(
-      onPressed: () {},
-      style: ElevatedButton.styleFrom(
-        backgroundColor: Colors.grey[300],
-        foregroundColor: Colors.black,
-        padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
-      ),
-      child: Text(size.toString()),
-    );
-  }
-
-  Widget _buildColorButton(Color color, {bool selected = false}) {
-    return Container(
-      height: 30,
-      width: 30,
-      decoration: BoxDecoration(
-        color: color,
-        shape: BoxShape.circle,
-        border: selected ? Border.all(color: Colors.blue, width: 1) : null,
       ),
     );
   }

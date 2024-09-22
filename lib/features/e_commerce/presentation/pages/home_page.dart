@@ -77,94 +77,97 @@ class _HomeTabState extends State<Home> {
             FocusScope.of(context).unfocus();
           },
           child: SingleChildScrollView(
-            child: Column(
-              children: [
-                Row(
-                  children: [
-                    Expanded(
-                      child: TextField(
-                        decoration: InputDecoration(
-                          prefixIcon: IconButton(
-                            onPressed: () {},
-                            icon: Image.asset('assets/images/search.png'),
-                          ),
-                          hintText: 'What do you search for?',
-                          hintStyle: TextStyle(color: primaryColor),
-                          enabledBorder: const OutlineInputBorder(
-                            borderSide:
-                                BorderSide(color: Colors.grey, width: 0.5),
-                            borderRadius: BorderRadius.horizontal(
-                              left: Radius.circular(20.0),
-                              right: Radius.circular(20.0),
+            child: Expanded(
+              child: Column(
+                children: [
+                  Row(
+                    children: [
+                      Expanded(
+                        child: TextField(
+                          decoration: InputDecoration(
+                            prefixIcon: IconButton(
+                              onPressed: () {},
+                              icon: Image.asset('assets/images/search.png'),
                             ),
-                          ),
-                          focusedBorder: OutlineInputBorder(
-                            borderSide:
-                                BorderSide(color: primaryColor, width: 2.0),
-                            borderRadius: const BorderRadius.horizontal(
-                              left: Radius.circular(20.0),
-                              right: Radius.circular(20.0),
+                            hintText: 'What do you search for?',
+                            hintStyle:
+                                const TextStyle(color: Color(0xff035696)),
+                            enabledBorder: const OutlineInputBorder(
+                              borderSide:
+                                  BorderSide(color: Colors.grey, width: 0.5),
+                              borderRadius: BorderRadius.horizontal(
+                                left: Radius.circular(20.0),
+                                right: Radius.circular(20.0),
+                              ),
+                            ),
+                            focusedBorder: OutlineInputBorder(
+                              borderSide:
+                                  BorderSide(color: primaryColor, width: 2.0),
+                              borderRadius: const BorderRadius.horizontal(
+                                left: Radius.circular(20.0),
+                                right: Radius.circular(20.0),
+                              ),
                             ),
                           ),
                         ),
                       ),
-                    ),
-                    IconButton(
-                      onPressed: () {}, // Navigation to cart screen //
-                      icon: Image.asset('assets/images/cart.png'),
-                    )
-                  ],
-                ),
-                Ads(
-                  adsImages: adsImages,
-                  currentIndex: _adsIndex,
-                  timer: _timer,
-                ),
-                Section(
-                  function: () {}, //Navigation to categories screen//
-                  secName: 'Categories',
-                ),
-                BlocConsumer(
-                  bloc: locator<HomeViewModel>(),
-                  builder: (context, state) {
-                    if (state is BaseLoadingState) {
-                      return LoadingWidget(); // Show loading indicator
-                    }
-                    if (state is BaseSuccessState<List<categoryDM>>) {
-                      return buildCategories(
-                          state.data); // Display categories when loaded
-                    }
-                    if (state is BaseErrorState) {
-                      return ErrorView(
-                          message: state.errorMessage); // Show error message
-                    } else {
-                      return LoadingWidget(); // Default fallback to loading
-                    }
-                  },
-                  listener: (BuildContext context, Object? state) {},
-                ),
-                const SizedBox(height: 12),
-                HomeAppliances(),
-                BlocBuilder(
-                  bloc: locator<ProductViewModel>(),
-                  builder: (context, state) {
-                    print('State: $state');
-                    if (state is ProductSuccessState<List<ProductDM>>) {
-                      return buildProducts(state.data);
-                    }
-                    if (state is ProductErrorState) {
-                      return ErrorView(message: state.errorMessage);
-                    }
-                    if (state is ProductLoadingState) {
-                      return LoadingWidget();
-                    } else {
-                      return Container(
-                        color: Colors.red,
-                      );
-                    }
-                  },
-                )
-              ],
+                      IconButton(
+                        onPressed: () {},
+                        icon: Image.asset('assets/images/cart.png'),
+                      )
+                    ],
+                  ),
+                  Ads(
+                    adsImages: adsImages,
+                    currentIndex: _adsIndex,
+                    timer: _timer,
+                  ),
+                  Section(
+                    function: () {},
+                    secName: 'Categories',
+                  ),
+                  BlocConsumer(
+                    bloc: locator<HomeViewModel>(),
+                    builder: (context, state) {
+                      if (state is BaseLoadingState) {
+                        return const LoadingWidget(); // Show loading indicator
+                      }
+                      if (state is BaseSuccessState<List<categoryDM>>) {
+                        return buildCategories(
+                            state.data); // Display categories when loaded
+                      }
+                      if (state is BaseErrorState) {
+                        return ErrorView(
+                            message: state.errorMessage); // Show error message
+                      } else {
+                        return const LoadingWidget(); // Default fallback to loading
+                      }
+                    },
+                    listener: (BuildContext context, Object? state) {},
+                  ),
+                  const SizedBox(height: 12),
+                  HomeAppliances(),
+                  BlocBuilder(
+                    bloc: locator<ProductViewModel>(),
+                    builder: (context, state) {
+                      print('State: $state');
+                      if (state is ProductSuccessState<List<ProductDM>>) {
+                        return buildProducts(state.data);
+                      }
+                      if (state is ProductErrorState) {
+                        return ErrorView(message: state.errorMessage);
+                      }
+                      if (state is ProductLoadingState) {
+                        return const LoadingWidget();
+                      } else {
+                        return Container(
+                          color: Colors.red,
+                        );
+                      }
+                    },
+                  )
+                ],
+              ),
             ),
           ),
         ),
@@ -201,10 +204,10 @@ class _HomeTabState extends State<Home> {
                 );
                 break;
               case 1:
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => const ProductPage()),
-                );
+                // Navigator.push(
+                //   context,
+                //   MaterialPageRoute(builder: (context) => const ProductPage()),
+                // );
                 break;
               case 2:
                 Navigator.push(
@@ -221,9 +224,79 @@ class _HomeTabState extends State<Home> {
             }
           },
           selectedItemColor:
-              Color(0xff035696), // set the color of the selected item
+              const Color(0xff035696), // set the color of the selected item
           unselectedItemColor:
-              Color(0xff035696), // set the color of the unselected items
+              const Color(0xff035696), // set the color of the unselected items
         ));
   }
+}
+
+Widget buildProducts(List<ProductDM> products) {
+  return GridView.builder(
+    gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+      crossAxisCount: 2,
+      childAspectRatio: 0.75,
+    ),
+    shrinkWrap: true,
+    physics: const NeverScrollableScrollPhysics(),
+    itemCount: products.length,
+    itemBuilder: (context, index) {
+      final product = products[index];
+      return GestureDetector(
+        onTap: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => ProductPage(product: product),
+            ),
+          );
+        },
+        child: Card(
+          elevation: 5,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(15),
+          ),
+          margin: const EdgeInsets.all(10),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              ClipRRect(
+                borderRadius:
+                    const BorderRadius.vertical(top: Radius.circular(15)),
+                child: Image.network(
+                  product.images!.first,
+                  height: 120,
+                  width: double.infinity,
+                  fit: BoxFit.cover,
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Text(
+                  product.title.toString(),
+                  style: const TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                  ),
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                child: Text(
+                  '\$${product.price}',
+                  style: const TextStyle(
+                    fontSize: 14,
+                    color: Color(0xff035696),
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      );
+    },
+  );
 }
