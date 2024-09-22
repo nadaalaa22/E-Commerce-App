@@ -67,167 +67,110 @@ class _HomeTabState extends State<Home> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-          surfaceTintColor: secondaryColor,
-          title: Image.asset('assets/images/route.png'),
-          elevation: 0,
-        ),
-        body: GestureDetector(
-          onTap: () {
-            FocusScope.of(context).unfocus();
-          },
-          child: SingleChildScrollView(
-            child: Expanded(
-              child: Column(
-                children: [
-                  Row(
-                    children: [
-                      Expanded(
-                        child: TextField(
-                          decoration: InputDecoration(
-                            prefixIcon: IconButton(
-                              onPressed: () {},
-                              icon: Image.asset('assets/images/search.png'),
+      appBar: AppBar(
+        surfaceTintColor: secondaryColor,
+        title: Image.asset('assets/images/route.png'),
+        elevation: 0,
+      ),
+      body: GestureDetector(
+        onTap: () {
+          FocusScope.of(context).unfocus();
+        },
+        child: SingleChildScrollView(
+          child: Expanded(
+            child: Column(
+              children: [
+                Row(
+                  children: [
+                    Expanded(
+                      child: TextField(
+                        decoration: InputDecoration(
+                          prefixIcon: IconButton(
+                            onPressed: () {},
+                            icon: Image.asset('assets/images/search.png'),
+                          ),
+                          hintText: 'What do you search for?',
+                          hintStyle: const TextStyle(color: Color(0xff035696)),
+                          enabledBorder: const OutlineInputBorder(
+                            borderSide:
+                                BorderSide(color: Colors.grey, width: 0.5),
+                            borderRadius: BorderRadius.horizontal(
+                              left: Radius.circular(20.0),
+                              right: Radius.circular(20.0),
                             ),
-                            hintText: 'What do you search for?',
-                            hintStyle:
-                                const TextStyle(color: Color(0xff035696)),
-                            enabledBorder: const OutlineInputBorder(
-                              borderSide:
-                                  BorderSide(color: Colors.grey, width: 0.5),
-                              borderRadius: BorderRadius.horizontal(
-                                left: Radius.circular(20.0),
-                                right: Radius.circular(20.0),
-                              ),
-                            ),
-                            focusedBorder: OutlineInputBorder(
-                              borderSide:
-                                  BorderSide(color: primaryColor, width: 2.0),
-                              borderRadius: const BorderRadius.horizontal(
-                                left: Radius.circular(20.0),
-                                right: Radius.circular(20.0),
-                              ),
+                          ),
+                          focusedBorder: OutlineInputBorder(
+                            borderSide:
+                                BorderSide(color: primaryColor, width: 2.0),
+                            borderRadius: const BorderRadius.horizontal(
+                              left: Radius.circular(20.0),
+                              right: Radius.circular(20.0),
                             ),
                           ),
                         ),
                       ),
-                      IconButton(
-                        onPressed: () {},
-                        icon: Image.asset('assets/images/cart.png'),
-                      )
-                    ],
-                  ),
-                  Ads(
-                    adsImages: adsImages,
-                    currentIndex: _adsIndex,
-                    timer: _timer,
-                  ),
-                  Section(
-                    function: () {},
-                    secName: 'Categories',
-                  ),
-                  BlocConsumer(
-                    bloc: locator<HomeViewModel>(),
-                    builder: (context, state) {
-                      if (state is BaseLoadingState) {
-                        return const LoadingWidget(); // Show loading indicator
-                      }
-                      if (state is BaseSuccessState<List<categoryDM>>) {
-                        return buildCategories(
-                            state.data); // Display categories when loaded
-                      }
-                      if (state is BaseErrorState) {
-                        return ErrorView(
-                            message: state.errorMessage); // Show error message
-                      } else {
-                        return const LoadingWidget(); // Default fallback to loading
-                      }
-                    },
-                    listener: (BuildContext context, Object? state) {},
-                  ),
-                  const SizedBox(height: 12),
-                  HomeAppliances(),
-                  BlocBuilder(
-                    bloc: locator<ProductViewModel>(),
-                    builder: (context, state) {
-                      print('State: $state');
-                      if (state is ProductSuccessState<List<ProductDM>>) {
-                        return buildProducts(state.data);
-                      }
-                      if (state is ProductErrorState) {
-                        return ErrorView(message: state.errorMessage);
-                      }
-                      if (state is ProductLoadingState) {
-                        return const LoadingWidget();
-                      } else {
-                        return Container(
-                          color: Colors.red,
-                        );
-                      }
-                    },
-                  )
-                ],
-              ),
+                    ),
+                    IconButton(
+                      onPressed: () {},
+                      icon: Image.asset('assets/images/cart.png'),
+                    )
+                  ],
+                ),
+                Ads(
+                  adsImages: adsImages,
+                  currentIndex: _adsIndex,
+                  timer: _timer,
+                ),
+                Section(
+                  function: () {},
+                  secName: 'Categories',
+                ),
+                BlocConsumer(
+                  bloc: locator<HomeViewModel>(),
+                  builder: (context, state) {
+                    if (state is BaseLoadingState) {
+                      return const LoadingWidget(); // Show loading indicator
+                    }
+                    if (state is BaseSuccessState<List<categoryDM>>) {
+                      return buildCategories(
+                          state.data); // Display categories when loaded
+                    }
+                    if (state is BaseErrorState) {
+                      return ErrorView(
+                          message: state.errorMessage); // Show error message
+                    } else {
+                      return const LoadingWidget(); // Default fallback to loading
+                    }
+                  },
+                  listener: (BuildContext context, Object? state) {},
+                ),
+                const SizedBox(height: 12),
+                HomeAppliances(),
+                BlocBuilder(
+                  bloc: locator<ProductViewModel>(),
+                  builder: (context, state) {
+                    print('State: $state');
+                    if (state is ProductSuccessState<List<ProductDM>>) {
+                      return buildProducts(state.data);
+                    }
+                    if (state is ProductErrorState) {
+                      return ErrorView(message: state.errorMessage);
+                    }
+                    if (state is ProductLoadingState) {
+                      return const LoadingWidget();
+                    } else {
+                      return Container(
+                        color: Colors.red,
+                      );
+                    }
+                  },
+                )
+              ],
             ),
           ),
         ),
-        bottomNavigationBar: BottomNavigationBar(
-          items: const [
-            BottomNavigationBarItem(
-              icon: Icon(Icons.home, color: Color(0xff035696)),
-              label: 'Home',
-              activeIcon: Icon(Icons.home, color: Color(0xff035696)),
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.shopping_bag, color: Color(0xff035696)),
-              label: 'Products',
-              activeIcon: Icon(Icons.shopping_bag, color: Color(0xff035696)),
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.favorite, color: Color(0xff035696)),
-              label: 'Favourites',
-              activeIcon: Icon(Icons.favorite, color: Color(0xff035696)),
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.contact_mail, color: Color(0xff035696)),
-              label: 'Contact',
-              activeIcon: Icon(Icons.contact_mail, color: Color(0xff035696)),
-            ),
-          ],
-          currentIndex: 0,
-          onTap: (index) {
-            switch (index) {
-              case 0:
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => const Home()),
-                );
-                break;
-              case 1:
-                // Navigator.push(
-                //   context,
-                //   MaterialPageRoute(builder: (context) => const ProductPage()),
-                // );
-                break;
-              case 2:
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => const FavPage()),
-                );
-                break;
-              case 3:
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => const ContactPage()),
-                );
-                break;
-            }
-          },
-          selectedItemColor:
-              const Color(0xff035696), // set the color of the selected item
-          unselectedItemColor:
-              const Color(0xff035696), // set the color of the unselected items
-        ));
+      ),
+    );
   }
 }
 
