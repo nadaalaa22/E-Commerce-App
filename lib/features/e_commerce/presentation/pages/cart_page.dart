@@ -1,5 +1,8 @@
 import 'package:e_commerce_app/core/app_theme.dart';
 import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 class CartPage extends StatefulWidget {
   @override
@@ -9,12 +12,14 @@ class CartPage extends StatefulWidget {
 class _CartPageState extends State<CartPage> {
   int _counter = 1;
   num _totalPrice = 0.0;
-  final num productPrice = 3500; // Example price of the product
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+  String? _userId;
+  List<QueryDocumentSnapshot> _cartItems = [];
 
   void _incrementCounter() {
     setState(() {
       _counter++;
-      _totalPrice = _counter * productPrice; // Update total price
     });
   }
 
@@ -22,7 +27,6 @@ class _CartPageState extends State<CartPage> {
     setState(() {
       if (_counter > 1) {
         _counter--;
-        _totalPrice = _counter * productPrice; // Update total price
       }
     });
   }
@@ -30,7 +34,23 @@ class _CartPageState extends State<CartPage> {
   @override
   void initState() {
     super.initState();
-    _totalPrice = productPrice; // Set initial total price
+    _getCurrentUserId();
+  }
+
+  void _getCurrentUserId() async {
+    final User? user = _auth.currentUser;
+    if (user != null) {
+      setState(() {
+        _userId = user.uid;
+      });
+    }
+  }
+
+  void _calculateTotalPrice() {
+    _totalPrice = 0.0;
+    _cartItems.forEach((item) {
+      _totalPrice += item['price'];
+    });
   }
 
   @override
@@ -64,104 +84,153 @@ class _CartPageState extends State<CartPage> {
           )
         ],
       ),
-      body: Container(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          children: [
-            Row(
-              children: [
-                Image.asset(
-                  "assets/images/shoose.png",
-                  width: 50,
-                  height: 50,
-                ),
-                const SizedBox(width: 10),
-                const Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text('Nike Air Jordan', style: TextStyle(fontSize: 18)),
-                      SizedBox(height: 4),
-                      Text('Orange | size 40',
-                          style: TextStyle(color: Colors.grey)),
-                    ],
-                  ),
-                ),
-                IconButton(
-                  icon: const Icon(Icons.delete),
-                  onPressed: () {
-                    // Add delete functionality here
-                  },
-                )
-              ],
-            ),
-            const SizedBox(height: 20),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text('EGP ${productPrice.toStringAsFixed(2)}',
-                    style: const TextStyle(fontSize: 16)),
-                Container(
-                  height: screenHeight * 0.05,
-                  decoration: BoxDecoration(
-                    color: const Color(0xff035696),
-                    borderRadius: BorderRadius.circular(50.0),
-                  ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      IconButton(
-                        onPressed: _decrementCounter,
-                        icon: const Icon(
-                          Icons.remove_circle_outline,
-                          size: 20,
-                        ),
-                        color: Colors.white,
+      body: _userId != null
+          ? StreamBuilder<QuerySnapshot>(
+              stream: _firestore
+                  .collection('users')
+                  .doc(_userId)
+                  .collection('cartItems')
+                  .snapshots(),
+              builder: (context, snapshot) {
+                if (snapshot.hasError) {
+                  return Text('Error: ${snapshot.error}');
+                }
+
+                switch (snapshot.connectionState) {
+                  case ConnectionState.waiting:
+                    return Text('Loading....');
+                  default:
+                    _cartItems = snapshot.data!.docs;
+                    _calculateTotalPrice();
+                    return Container(
+                      padding: const EdgeInsets.all(16.0),
+                      child: Column(
+                        children: [
+                          ListView.builder(
+                            shrinkWrap: true,
+                            itemCount: _cartItems.length,
+                            itemBuilder: (context, index) {
+                              return Card(
+                                child: Padding(
+                                  padding: const EdgeInsets.all(16.0),
+                                  child: Row(
+                                    children: [
+                                      // Product image
+                                      _cartItems[index]['image'] != null
+                                          ? Image.network(
+                                              _cartItems[index]['image'],
+                                              width: 100,
+                                              height: 100,
+                                              errorBuilder:
+                                                  (context, error, stackTrace) {
+                                                return const Icon(Icons.error);
+                                              },
+                                            )
+                                          : const Icon(Icons.image),
+                                      const SizedBox(width: 10),
+                                      // Product details
+                                      Expanded(
+                                        child: Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            Text(
+                                              _cartItems[index]['title'],
+                                              style:
+                                                  const TextStyle(fontSize: 18),
+                                              maxLines: 2,
+                                              overflow: TextOverflow.ellipsis,
+                                            ),
+                                            Text(
+                                              'EGP ${_cartItems[index]['price'].toStringAsFixed(2)}',
+                                              style:
+                                                  const TextStyle(fontSize: 16),
+                                            ),
+                                            const SizedBox(height: 4),
+                                          ],
+                                        ),
+                                      ),
+
+                                      Column(
+                                        children: [
+                                          IconButton(
+                                            icon: const Icon(Icons.delete),
+                                            onPressed: () {
+                                              // Get the document ID of the product to be deleted
+                                              String documentId =
+                                                  _cartItems[index].id;
+
+                                              // Delete the product from Firebase
+                                              _firestore
+                                                  .collection('users')
+                                                  .doc(_userId)
+                                                  .collection('cartItems')
+                                                  .doc(documentId)
+                                                  .delete()
+                                                  .then((_) {
+                                                // Product deleted successfully
+                                                Fluttertoast.showToast(
+                                                  msg:
+                                                      "Product Deleted Successfuly",
+                                                  toastLength:
+                                                      Toast.LENGTH_SHORT,
+                                                  gravity: ToastGravity.BOTTOM,
+                                                  timeInSecForIosWeb: 1,
+                                                  backgroundColor:
+                                                      const Color(0xff035696),
+                                                  textColor: Colors.white,
+                                                  fontSize: 15.0,
+                                                );
+                                              }).catchError((error) {});
+                                            },
+                                          )
+                                        ],
+                                      )
+                                    ],
+                                  ),
+                                ),
+                              );
+                            },
+                          ),
+                          const SizedBox(height: 20),
+                          Text(
+                            'Total: EGP ${_totalPrice.toStringAsFixed(2)}',
+                            style: const TextStyle(fontSize: 16),
+                          ),
+                          const SizedBox(height: 20),
+                          Container(
+                            height: screenHeight * 0.05,
+                            decoration: BoxDecoration(
+                              color: const Color(0xff035696),
+                              borderRadius: BorderRadius.circular(50.0),
+                            ),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Text(
+                                  'Check Out ',
+                                  style: TextStyle(
+                                    fontSize: screenWidth * 0.035,
+                                    color: Colors.white,
+                                  ),
+                                ),
+                                const Icon(
+                                  Icons.arrow_right_alt,
+                                  size: 20,
+                                  color: Colors.white,
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
                       ),
-                      Text(
-                        '$_counter',
-                        style: TextStyle(
-                            fontSize: screenWidth * 0.035, color: Colors.white),
-                      ),
-                      IconButton(
-                        onPressed: _incrementCounter,
-                        icon: const Icon(
-                          Icons.add_circle_outline,
-                          size: 20,
-                        ),
-                        color: Colors.white,
-                      ),
-                    ],
-                  ),
-                ),
-              ],
+                    );
+                }
+              },
+            )
+          : const Center(
+              child: Text('Please login to view your cart'),
             ),
-            const SizedBox(height: 20),
-            Container(
-              height: screenHeight * 0.05,
-              decoration: BoxDecoration(
-                color: const Color(0xff035696),
-                borderRadius: BorderRadius.circular(50.0),
-              ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(
-                    'Check Out     ',
-                    style: TextStyle(
-                        fontSize: screenWidth * 0.035, color: Colors.white),
-                  ),
-                  const Icon(
-                    Icons.arrow_right_alt,
-                    size: 20,
-                    color: Colors.white,
-                  ),
-                ],
-              ),
-            ),
-          ],
-        ),
-      ),
     );
   }
 }

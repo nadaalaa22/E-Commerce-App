@@ -260,6 +260,7 @@ class _ProductDetailsState extends State<ProductDetails> {
                                         'title': widget.product.title,
                                         'price': widget.product.price,
                                         'quantity': _counter,
+                                        'image': widget.product.images!.first,
                                       });
 
                                       Fluttertoast.showToast(
