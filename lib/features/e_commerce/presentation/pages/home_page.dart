@@ -14,7 +14,7 @@ import 'package:e_commerce_app/features/Api/response/ProductDM.dart';
 import 'package:e_commerce_app/features/Api/response/categoryDm.dart';
 import 'package:e_commerce_app/features/e_commerce/presentation/pages/contact_page.dart';
 import 'package:e_commerce_app/features/e_commerce/presentation/pages/fav_page.dart';
-import 'package:e_commerce_app/features/e_commerce/presentation/pages/product_page.dart';
+import 'package:e_commerce_app/features/e_commerce/presentation/pages/product_Details.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../core/widgets/loading_widget.dart';
@@ -190,7 +190,7 @@ Widget buildProducts(List<ProductDM> products) {
           Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (context) => ProductPage(product: product),
+              builder: (context) => ProductDetails(product: product),
             ),
           );
         },

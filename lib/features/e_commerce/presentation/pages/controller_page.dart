@@ -1,7 +1,7 @@
+import 'package:e_commerce_app/features/e_commerce/presentation/cart_page.dart';
 import 'package:e_commerce_app/features/e_commerce/presentation/pages/contact_page.dart';
 import 'package:e_commerce_app/features/e_commerce/presentation/pages/fav_page.dart';
 import 'package:e_commerce_app/features/e_commerce/presentation/pages/home_page.dart';
-import 'package:e_commerce_app/features/e_commerce/presentation/pages/product_page.dart';
 import 'package:flutter/material.dart';
 import 'package:responsive_navigation_bar/responsive_navigation_bar.dart';
 
@@ -26,15 +26,15 @@ class _ControllerPageState extends State<ControllerPage> {
   Widget _getSelectedPage() {
     switch (_selectedIndex) {
       case 0:
-        return Home();
+        return const Home();
       case 1:
-        return Home();
+        return const FavPage();
       case 2:
-        return FavPage();
+        return CartPage();
       case 3:
-        return ContactPage();
+        return const ContactPage();
       default:
-        return Home();
+        return const Home();
     }
   }
 
@@ -60,15 +60,15 @@ class _ControllerPageState extends State<ControllerPage> {
             ),
           ),
           NavigationBarButton(
-            text: 'Products',
-            icon: Icons.mode,
+            text: 'Favorite',
+            icon: Icons.favorite,
             backgroundGradient: LinearGradient(
               colors: [primaryColor, secondaryColor],
             ),
           ),
           NavigationBarButton(
-            text: 'Favorite',
-            icon: Icons.favorite,
+            text: 'Cart',
+            icon: Icons.shopping_cart,
             backgroundGradient: LinearGradient(
               colors: [primaryColor, secondaryColor],
             ),

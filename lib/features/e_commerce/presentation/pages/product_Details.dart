@@ -1,21 +1,20 @@
-import 'package:e_commerce_app/core/app_theme.dart';
 import 'package:e_commerce_app/features/Api/response/ProductDM.dart';
 import 'package:flutter/material.dart';
 
-class ProductPage extends StatefulWidget {
+class ProductDetails extends StatefulWidget {
   final ProductDM product;
 
-  const ProductPage({
+  const ProductDetails({
     super.key,
     required this.product,
   });
 
   @override
   // ignore: library_private_types_in_public_api
-  _ProductPageState createState() => _ProductPageState();
+  _ProductDetailsState createState() => _ProductDetailsState();
 }
 
-class _ProductPageState extends State<ProductPage> {
+class _ProductDetailsState extends State<ProductDetails> {
   int _counter = 1;
   num _totalPrice = 0.0;
 
