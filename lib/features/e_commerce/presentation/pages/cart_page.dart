@@ -1,4 +1,5 @@
 import 'package:e_commerce_app/core/app_theme.dart';
+import 'package:e_commerce_app/core/widgets/loading_widget.dart';
 import 'package:e_commerce_app/features/Api/response/ProductDM.dart';
 import 'package:e_commerce_app/features/e_commerce/presentation/pages/product_Details.dart';
 import 'package:flutter/material.dart';
@@ -86,7 +87,7 @@ class _CartPageState extends State<CartPage> {
 
                 switch (snapshot.connectionState) {
                   case ConnectionState.waiting:
-                    return Text('Loading....');
+                    return const LoadingWidget();
                   default:
                     _cartItems = snapshot.data!.docs;
                     _calculateTotalPrice();
