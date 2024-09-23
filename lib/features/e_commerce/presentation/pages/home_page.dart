@@ -83,28 +83,31 @@ class _HomeTabState extends State<Home> {
                 Row(
                   children: [
                     Expanded(
-                      child: TextField(
-                        decoration: InputDecoration(
-                          prefixIcon: IconButton(
-                            onPressed: () {},
-                            icon: Image.asset('assets/images/search.png'),
-                          ),
-                          hintText: 'What do you search for?',
-                          hintStyle: const TextStyle(color: Color(0xff035696)),
-                          enabledBorder: const OutlineInputBorder(
-                            borderSide:
-                                BorderSide(color: Colors.grey, width: 0.5),
-                            borderRadius: BorderRadius.horizontal(
-                              left: Radius.circular(20.0),
-                              right: Radius.circular(20.0),
+                      child: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: TextField(
+                          decoration: InputDecoration(
+                            prefixIcon: IconButton(
+                              onPressed: () {},
+                              icon: Image.asset('assets/images/search.png'),
                             ),
-                          ),
-                          focusedBorder: OutlineInputBorder(
-                            borderSide:
-                                BorderSide(color: primaryColor, width: 2.0),
-                            borderRadius: const BorderRadius.horizontal(
-                              left: Radius.circular(20.0),
-                              right: Radius.circular(20.0),
+                            hintText: 'What do you search for?',
+                            hintStyle: const TextStyle(color: Color(0xff035696)),
+                            enabledBorder: const OutlineInputBorder(
+                              borderSide:
+                                  BorderSide(color: Colors.grey, width: 0.5),
+                              borderRadius: BorderRadius.horizontal(
+                                left: Radius.circular(20.0),
+                                right: Radius.circular(20.0),
+                              ),
+                            ),
+                            focusedBorder: OutlineInputBorder(
+                              borderSide:
+                                  BorderSide(color: primaryColor, width: 2.0),
+                              borderRadius: const BorderRadius.horizontal(
+                                left: Radius.circular(20.0),
+                                right: Radius.circular(20.0),
+                              ),
                             ),
                           ),
                         ),

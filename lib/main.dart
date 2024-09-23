@@ -19,10 +19,10 @@ void main() async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
-  await AuthenticationRemoteDsImpl(
-          networkInfo:
-              NetworkInfoImpl(connectionChecker: InternetConnectionChecker()))
-      .signOut();
+  // await AuthenticationRemoteDsImpl(
+  //         networkInfo:
+  //             NetworkInfoImpl(connectionChecker: InternetConnectionChecker()))
+  //     .signOut();
   // await AuthenticationImp().signIn("nada@gmail.com", "123456789");
   runApp(MultiBlocProvider(
     providers: [
