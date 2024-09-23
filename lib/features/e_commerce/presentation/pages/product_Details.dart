@@ -7,10 +7,12 @@ import 'package:fluttertoast/fluttertoast.dart';
 
 class ProductDetails extends StatefulWidget {
   final ProductDM product;
+  final int? counter;
 
   const ProductDetails({
     super.key,
     required this.product,
+    this.counter,
   });
 
   @override
@@ -22,10 +24,6 @@ class _ProductDetailsState extends State<ProductDetails> {
   num _totalPrice = 0.0;
 
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
-  late final CollectionReference _cartItemsCollection = _firestore
-      .collection('users')
-      .doc('currentUserUid')
-      .collection('cartItems');
 
   void _incrementCounter() {
     setState(() {
@@ -45,8 +43,10 @@ class _ProductDetailsState extends State<ProductDetails> {
 
   @override
   void initState() {
-    super.initState();
     _totalPrice = widget.product.price ?? 0;
+    _counter = widget.counter?? 1;
+    super.initState();
+
   }
 
   @override
@@ -66,25 +66,25 @@ class _ProductDetailsState extends State<ProductDetails> {
         ),
         title: const Text('Product Details'),
         centerTitle: true,
-        actions: [
-          GestureDetector(
-            onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => CartPage(),
-                ),
-              );
-            },
-            child: const Icon(
-              Icons.shopping_cart,
-              size: 25,
-            ),
-          ),
-          const SizedBox(
-            width: 30,
-          )
-        ],
+        // actions: [
+        //   GestureDetector(
+        //     onTap: () {
+        //       Navigator.push(
+        //         context,
+        //         MaterialPageRoute(
+        //           builder: (context) => CartPage(),
+        //         ),
+        //       );
+        //     },
+        //     child: const Icon(
+        //       Icons.shopping_cart,
+        //       size: 25,
+        //     ),
+        //   ),
+        //   const SizedBox(
+        //     width: 30,
+        //   )
+        // ],
       ),
       body: SingleChildScrollView(
         child: Column(
@@ -261,6 +261,9 @@ class _ProductDetailsState extends State<ProductDetails> {
                                         'price': widget.product.price,
                                         'quantity': _counter,
                                         'image': widget.product.images!.first,
+                                        'sold' : widget.product.sold,
+                                        'description' : widget.product.description,
+                                        'ratingsAverage' : widget.product.ratingsAverage
                                       });
 
                                       Fluttertoast.showToast(

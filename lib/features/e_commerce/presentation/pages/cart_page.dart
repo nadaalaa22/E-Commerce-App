@@ -1,4 +1,6 @@
 import 'package:e_commerce_app/core/app_theme.dart';
+import 'package:e_commerce_app/features/Api/response/ProductDM.dart';
+import 'package:e_commerce_app/features/e_commerce/presentation/pages/product_Details.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -16,20 +18,6 @@ class _CartPageState extends State<CartPage> {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   String? _userId;
   List<QueryDocumentSnapshot> _cartItems = [];
-
-  void _incrementCounter() {
-    setState(() {
-      _counter++;
-    });
-  }
-
-  void _decrementCounter() {
-    setState(() {
-      if (_counter > 1) {
-        _counter--;
-      }
-    });
-  }
 
   @override
   void initState() {
@@ -61,18 +49,18 @@ class _CartPageState extends State<CartPage> {
       appBar: AppBar(
         title: Text(
           'Cart',
-          style: TextStyle(color: primaryColor),
+          style: appTheme.textTheme.displayLarge,
         ),
         centerTitle: true,
-        leading: IconButton(
-          icon: Icon(
-            Icons.arrow_back,
-            color: primaryColor,
-          ),
-          onPressed: () {
-            Navigator.pop(context);
-          },
-        ),
+        // leading: IconButton(
+        //   icon: Icon(
+        //     Icons.arrow_back,
+        //     color: primaryColor,
+        //   ),
+        //   onPressed: () {
+        //     Navigator.pop(context);
+        //   },
+        // ),
         actions: [
           Icon(
             Icons.shopping_cart,
@@ -110,83 +98,104 @@ class _CartPageState extends State<CartPage> {
                             shrinkWrap: true,
                             itemCount: _cartItems.length,
                             itemBuilder: (context, index) {
-                              return Card(
-                                child: Padding(
-                                  padding: const EdgeInsets.all(16.0),
-                                  child: Row(
-                                    children: [
-                                      // Product image
-                                      _cartItems[index]['image'] != null
-                                          ? Image.network(
-                                              _cartItems[index]['image'],
-                                              width: 100,
-                                              height: 100,
-                                              errorBuilder:
-                                                  (context, error, stackTrace) {
-                                                return const Icon(Icons.error);
+                              return GestureDetector(
+                                onTap: (){
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => ProductDetails(
+                                        product: ProductDM(
+                                          sold: _cartItems[index]['sold'],
+                                          id: _cartItems[index]['productId'],
+                                          title: _cartItems[index]['title'],
+                                          description: _cartItems[index]['description'],
+                                          price: _cartItems[index]['price'],
+                                          ratingsAverage: _cartItems[index]['ratingsAverage'],
+                                          images: [_cartItems[index]['image']],
+                                        ),
+                                        counter: _cartItems[index]['quantity'],
+                                      ),
+                                    ),
+                                  );
+                                },
+                                child: Card(
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(16.0),
+                                    child: Row(
+                                      children: [
+                                        // Product image
+                                        _cartItems[index]['image'] != null
+                                            ? Image.network(
+                                                _cartItems[index]['image'],
+                                                width: 100,
+                                                height: 100,
+                                                errorBuilder:
+                                                    (context, error, stackTrace) {
+                                                  return const Icon(Icons.error);
+                                                },
+                                              )
+                                            : const Icon(Icons.image),
+                                        const SizedBox(width: 10),
+                                        // Product details
+                                        Expanded(
+                                          child: Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              Text(
+                                                _cartItems[index]['title'],
+                                                style:
+                                                    const TextStyle(fontSize: 18),
+                                                maxLines: 2,
+                                                overflow: TextOverflow.ellipsis,
+                                              ),
+                                              Text(
+                                                'EGP ${_cartItems[index]['price'].toStringAsFixed(2)}',
+                                                style:
+                                                    const TextStyle(fontSize: 16),
+                                              ),
+                                              const SizedBox(height: 4),
+                                            ],
+                                          ),
+                                        ),
+
+                                        Column(
+                                          children: [
+                                            IconButton(
+                                              icon: const Icon(Icons.delete),
+                                              onPressed: () {
+                                                // Get the document ID of the product to be deleted
+                                                String documentId =
+                                                    _cartItems[index].id;
+
+                                                // Delete the product from Firebase
+                                                _firestore
+                                                    .collection('users')
+                                                    .doc(_userId)
+                                                    .collection('cartItems')
+                                                    .doc(documentId)
+                                                    .delete()
+                                                    .then((_) {
+                                                  // Product deleted successfully
+                                                  Fluttertoast.showToast(
+                                                    msg:
+                                                        "Product Deleted Successfuly",
+                                                    toastLength:
+                                                        Toast.LENGTH_SHORT,
+                                                    gravity: ToastGravity.BOTTOM,
+                                                    timeInSecForIosWeb: 1,
+                                                    backgroundColor:
+                                                        const Color(0xff035696),
+                                                    textColor: Colors.white,
+                                                    fontSize: 15.0,
+                                                  );
+                                                }).catchError((error) {});
                                               },
                                             )
-                                          : const Icon(Icons.image),
-                                      const SizedBox(width: 10),
-                                      // Product details
-                                      Expanded(
-                                        child: Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: [
-                                            Text(
-                                              _cartItems[index]['title'],
-                                              style:
-                                                  const TextStyle(fontSize: 18),
-                                              maxLines: 2,
-                                              overflow: TextOverflow.ellipsis,
-                                            ),
-                                            Text(
-                                              'EGP ${_cartItems[index]['price'].toStringAsFixed(2)}',
-                                              style:
-                                                  const TextStyle(fontSize: 16),
-                                            ),
-                                            const SizedBox(height: 4),
                                           ],
-                                        ),
-                                      ),
-
-                                      Column(
-                                        children: [
-                                          IconButton(
-                                            icon: const Icon(Icons.delete),
-                                            onPressed: () {
-                                              // Get the document ID of the product to be deleted
-                                              String documentId =
-                                                  _cartItems[index].id;
-
-                                              // Delete the product from Firebase
-                                              _firestore
-                                                  .collection('users')
-                                                  .doc(_userId)
-                                                  .collection('cartItems')
-                                                  .doc(documentId)
-                                                  .delete()
-                                                  .then((_) {
-                                                // Product deleted successfully
-                                                Fluttertoast.showToast(
-                                                  msg:
-                                                      "Product Deleted Successfuly",
-                                                  toastLength:
-                                                      Toast.LENGTH_SHORT,
-                                                  gravity: ToastGravity.BOTTOM,
-                                                  timeInSecForIosWeb: 1,
-                                                  backgroundColor:
-                                                      const Color(0xff035696),
-                                                  textColor: Colors.white,
-                                                  fontSize: 15.0,
-                                                );
-                                              }).catchError((error) {});
-                                            },
-                                          )
-                                        ],
-                                      )
-                                    ],
+                                        )
+                                      ],
+                                    ),
                                   ),
                                 ),
                               );
