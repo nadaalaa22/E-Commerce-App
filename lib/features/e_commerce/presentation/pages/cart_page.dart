@@ -1,10 +1,10 @@
+import 'package:e_commerce_app/core/widgets/toast.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:e_commerce_app/core/app_theme.dart';
 import 'package:e_commerce_app/core/widgets/loading_widget.dart';
 import 'package:e_commerce_app/features/Api/response/ProductDM.dart';
 import 'package:e_commerce_app/features/e_commerce/presentation/pages/product_Details.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 
 import '../bloc/cart_bloc/cart_bloc.dart';
 
@@ -97,7 +97,7 @@ class CartPage extends StatelessWidget {
                                           overflow: TextOverflow.ellipsis,
                                         ),
                                         Text(
-                                          'EGP ${item['price'].toStringAsFixed(2)}',
+                                          '\$${item['price'].toStringAsFixed(2)}',
                                           style: const TextStyle(fontSize: 16),
                                         ),
                                       ],
@@ -109,16 +109,7 @@ class CartPage extends StatelessWidget {
                                       BlocProvider.of<CartBloc>(context).add(
                                         DeleteCartItem(item.id),
                                       );
-                                      Fluttertoast.showToast(
-                                        msg: "Product Deleted Successfuly",
-                                        toastLength: Toast.LENGTH_SHORT,
-                                        gravity: ToastGravity.BOTTOM,
-                                        timeInSecForIosWeb: 1,
-                                        backgroundColor:
-                                            const Color(0xff035696),
-                                        textColor: Colors.white,
-                                        fontSize: 15.0,
-                                      );
+                                      showToast("Product Deleted Successfuly");
                                     },
                                   )
                                 ],
