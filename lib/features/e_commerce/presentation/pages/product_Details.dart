@@ -5,6 +5,8 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
+import '../../../../core/widgets/toast.dart';
+
 class ProductDetails extends StatefulWidget {
   final ProductDM product;
   final int? counter;
@@ -44,9 +46,8 @@ class _ProductDetailsState extends State<ProductDetails> {
   @override
   void initState() {
     _totalPrice = widget.product.price ?? 0;
-    _counter = widget.counter?? 1;
+    _counter = widget.counter ?? 1;
     super.initState();
-
   }
 
   @override
@@ -244,16 +245,8 @@ class _ProductDetailsState extends State<ProductDetails> {
                                             .get();
 
                                     if (querySnapshot.docs.isNotEmpty) {
-                                      Fluttertoast.showToast(
-                                        msg: "Product already exists in cart",
-                                        toastLength: Toast.LENGTH_SHORT,
-                                        gravity: ToastGravity.BOTTOM,
-                                        timeInSecForIosWeb: 1,
-                                        backgroundColor:
-                                            const Color(0xff035696),
-                                        textColor: Colors.white,
-                                        fontSize: 15.0,
-                                      );
+                                      showToast(
+                                          "Product already exists in cart");
                                     } else {
                                       await cartItemsCollection.add({
                                         'productId': widget.product.id,
@@ -261,21 +254,14 @@ class _ProductDetailsState extends State<ProductDetails> {
                                         'price': widget.product.price,
                                         'quantity': _counter,
                                         'image': widget.product.images!.first,
-                                        'sold' : widget.product.sold,
-                                        'description' : widget.product.description,
-                                        'ratingsAverage' : widget.product.ratingsAverage
+                                        'sold': widget.product.sold,
+                                        'description':
+                                            widget.product.description,
+                                        'ratingsAverage':
+                                            widget.product.ratingsAverage
                                       });
 
-                                      Fluttertoast.showToast(
-                                        msg: "Product Added to Cart",
-                                        toastLength: Toast.LENGTH_SHORT,
-                                        gravity: ToastGravity.BOTTOM,
-                                        timeInSecForIosWeb: 1,
-                                        backgroundColor:
-                                            const Color(0xff035696),
-                                        textColor: Colors.white,
-                                        fontSize: 15.0,
-                                      );
+                                      showToast("Product Added to Cart");
                                     }
                                   },
                                   style: ElevatedButton.styleFrom(
