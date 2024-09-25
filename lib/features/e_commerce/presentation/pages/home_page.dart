@@ -13,14 +13,11 @@ import 'package:e_commerce_app/features/Api/domain/getIt.dart';
 import 'package:e_commerce_app/features/Api/domain/product_view_model.dart';
 import 'package:e_commerce_app/features/Api/response/ProductDM.dart';
 import 'package:e_commerce_app/features/Api/response/categoryDm.dart';
-import 'package:e_commerce_app/features/e_commerce/presentation/pages/contact_page.dart';
-import 'package:e_commerce_app/features/e_commerce/presentation/pages/fav_page.dart';
 import 'package:e_commerce_app/features/e_commerce/presentation/pages/product_Details.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../core/widgets/loading_widget.dart';
-import '../../../../core/widgets/toast.dart';
 
 class Home extends StatefulWidget {
   const Home({super.key});
@@ -116,7 +113,7 @@ class _HomeTabState extends State<Home> {
                         ),
                         onChanged: (value) {
                           setState(() {
-                            _searchQuery = value; // Update the search query
+                            _searchQuery = value;
                           });
                         },
                       ),
@@ -141,16 +138,15 @@ class _HomeTabState extends State<Home> {
                 bloc: locator<HomeViewModel>(),
                 builder: (context, state) {
                   if (state is BaseLoadingState) {
-                    return const LoadingWidget(); // Show loading indicator
+                    return const LoadingWidget();
                   }
                   if (state is BaseSuccessState<List<categoryDM>>) {
-                    return buildCategories(
-                        state.data); // Display categories when loaded
+                    return buildCategories(state.data);
                   }
                   if (state is BaseErrorState) {
                     return ErrorView(message: state.errorMessage);
                   } else {
-                    return const LoadingWidget(); // Default fallback to loading
+                    return const LoadingWidget();
                   }
                 },
                 listener: (BuildContext context, Object? state) {},
@@ -162,8 +158,7 @@ class _HomeTabState extends State<Home> {
                 builder: (context, state) {
                   print('State: $state');
                   if (state is ProductSuccessState<List<ProductDM>>) {
-                    return buildProducts(
-                        state.data); // Rebuild the product list
+                    return buildProducts(state.data);
                   }
                   if (state is ProductErrorState) {
                     return ErrorView(message: state.errorMessage);
@@ -243,8 +238,8 @@ class _HomeTabState extends State<Home> {
                           shape: BoxShape.circle,
                         ),
                         child: FutureBuilder<bool>(
-                          future: checkIfFavorited(product.id,
-                              favItemsCollection), // Handle potential null
+                          future:
+                              checkIfFavorited(product.id, favItemsCollection),
                           builder: (context, snapshot) {
                             IconData icon = Icons.favorite_border;
                             Color iconColor = const Color(0xff035696);
@@ -252,9 +247,8 @@ class _HomeTabState extends State<Home> {
                             if (snapshot.connectionState ==
                                 ConnectionState.done) {
                               if (snapshot.data == true) {
-                                icon = Icons.favorite; // Favorited
-                                iconColor = const Color(
-                                    0xff035696); // Change color if favorited
+                                icon = Icons.favorite;
+                                iconColor = const Color(0xff035696);
                               }
                             }
 
@@ -266,7 +260,6 @@ class _HomeTabState extends State<Home> {
                               ),
                               onPressed: () async {
                                 if (snapshot.data == true) {
-                                  // Product is already favorited, remove it
                                   final querySnapshot = await favItemsCollection
                                       .where('productId', isEqualTo: product.id)
                                       .get();
@@ -276,7 +269,6 @@ class _HomeTabState extends State<Home> {
                                     }
                                   }
                                 } else {
-                                  // Product is not favorited, add it
                                   await favItemsCollection.add({
                                     'productId': product.id,
                                     'title': product.title,
@@ -326,7 +318,6 @@ class _HomeTabState extends State<Home> {
     );
   }
 
-// Method to check if a product is favorited
   Future<bool> checkIfFavorited(
       String? productId, CollectionReference favItemsCollection) async {
     final querySnapshot =
