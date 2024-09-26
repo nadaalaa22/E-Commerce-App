@@ -54,7 +54,6 @@ class FavPage extends StatelessWidget {
                                     ratingsAverage: item['ratingsAverage'],
                                     images: [item['image']],
                                   ),
-                                  counter: item['quantity'],
                                 ),
                               ),
                             );
@@ -110,12 +109,6 @@ class FavPage extends StatelessWidget {
                         );
                       },
                     ),
-                    const SizedBox(height: 20),
-                    Text(
-                      'Total: \$ ${state.totalPrice.toStringAsFixed(2)}',
-                      style: const TextStyle(fontSize: 16),
-                    ),
-                    const SizedBox(height: 20),
                   ],
                 ),
               );

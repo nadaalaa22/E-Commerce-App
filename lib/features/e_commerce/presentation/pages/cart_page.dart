@@ -23,14 +23,6 @@ class CartPage extends StatelessWidget {
           style: appTheme.textTheme.displayLarge,
         ),
         centerTitle: true,
-        actions: [
-          Icon(
-            Icons.shopping_cart,
-            color: primaryColor,
-            size: 25,
-          ),
-          const SizedBox(width: 30)
-        ],
       ),
       body: BlocProvider(
         create: (_) => CartBloc(),
