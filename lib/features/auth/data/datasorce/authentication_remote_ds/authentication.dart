@@ -1,5 +1,7 @@
 import 'dart:convert';
 
+import 'package:e_commerce_app/core/errors/failures.dart';
+import 'package:e_commerce_app/core/networks/network_info.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 import '../../model/auth_model.dart';
@@ -15,6 +17,9 @@ abstract class AuthenticationRemoteDs {
 }
 
 class AuthenticationRemoteDsImpl extends AuthenticationRemoteDs {
+  final NetworkInfo networkInfo ;
+
+  AuthenticationRemoteDsImpl({required this.networkInfo});
   @override
   Future<UserCredential?> signIn(AuthModel userModel) async {
     try {
@@ -27,12 +32,21 @@ class AuthenticationRemoteDsImpl extends AuthenticationRemoteDs {
     } on FirebaseAuthException catch (e) {
       if (e.code == 'user-not-found') {
         print('No user found for that email.');
+        throw(UserNotFoundFailure());
       } else if (e.code == 'wrong-password') {
         print('Wrong password provided for that user.');
+        throw(WrongPasswordFailure());
       } else if (e.code == 'invalid-email') {
         print('The email address is badly formatted.');
+        throw(WrongEmailFailure());
       } else {
+        bool isConnected = await networkInfo.isConnected;
+        if(!isConnected){
+          throw(OfflineFailure());
+        }
         print('Error during sign-in: ${e.message}');
+        throw(FailureWhileSignIn());
+
       }
       return null;
     } catch (e) {
@@ -54,9 +68,14 @@ class AuthenticationRemoteDsImpl extends AuthenticationRemoteDs {
         print('The password provided is too weak.');
       } else if (e.code == 'email-already-in-use') {
         print('The account already exists for that email.');
+        throw(EmailAlreadyExistFailer());
       } else if (e.code == 'invalid-email') {
         print('The email address is badly formatted.');
       } else {
+        bool isConnected = await networkInfo.isConnected;
+        if(!isConnected){
+          throw(OfflineFailure());
+        }
         print('Error during sign-up: ${e.message}');
       }
     } catch (e) {

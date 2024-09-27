@@ -8,4 +8,10 @@ class Constants {
   static var titleThree = "Plant a tree, green the Earth";
   static var descriptionThree =
       "Find almost all types of plants that you like here.";
+
+  static const String serverError = 'Server error occurred. Please try again later.';
+  static const String noInternetConnection = 'No internet connection. Please check your connection.';
+  static const String noDataFound = 'No data found. Please try again later.';
+  static const String unexpectedError = 'An unexpected error occurred. Please try again.';
+  static const String errorMessage = 'Error occurred while fetching data.';
 }

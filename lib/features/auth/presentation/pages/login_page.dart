@@ -10,9 +10,6 @@ import '../../data/model/auth_model.dart';
 import '../bloc/auth_bloc/authentication_bloc.dart';
 import '../bloc/user_data_bloc/user_data_bloc.dart';
 
-
-
-
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
 
@@ -26,7 +23,7 @@ class _LoginPageState extends State<LoginPage> {
   var password = TextEditingController();
 
   GlobalKey<FormState> keyLogin = GlobalKey();
-   bool  flag = false ;
+  bool flag = false;
 
   @override
   void initState() {
@@ -39,10 +36,9 @@ class _LoginPageState extends State<LoginPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(),
       body: BlocConsumer<AuthBloc, AuthState>(
         listener: (BuildContext context, AuthState state) {
-          if (state is UserAuthorizedState ) {
+          if (state is UserAuthorizedState) {
             context.read<UserBloc>().add(GetUserEvent());
             Navigator.pushReplacement(
                 context,
@@ -59,7 +55,8 @@ class _LoginPageState extends State<LoginPage> {
             return const Center(child: CircularProgressIndicator());
           }
 
-            return Form(
+          return Center(
+            child: Form(
               key: keyLogin,
               child: Padding(
                 padding: const EdgeInsets.all(20.0),
@@ -128,13 +125,10 @@ class _LoginPageState extends State<LoginPage> {
                                 });
                               },
                               icon: Icon(
-                                flag
-                                    ? Icons.visibility
-                                    : Icons.visibility_off,
+                                flag ? Icons.visibility : Icons.visibility_off,
                               ),
                             ),
                           ),
-
                           validator: (text) {
                             if (text!.isEmpty) {
                               return 'field can not be null';
@@ -168,12 +162,11 @@ class _LoginPageState extends State<LoginPage> {
                                     .read<AuthBloc>()
                                     .add(SignIn(userModel: userModel));
                               }
-
                             },
                             child: const Text(
                               'Login',
                               style:
-                              TextStyle(color: Colors.white, fontSize: 24),
+                                  TextStyle(color: Colors.white, fontSize: 24),
                             ),
                           ),
                         ),
@@ -183,14 +176,13 @@ class _LoginPageState extends State<LoginPage> {
                         Center(
                           child: SingleChildScrollView(
                             scrollDirection: Axis.horizontal,
-
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
                                 const Text(
                                   'Don\'t have an account?',
-                                  style:
-                                  TextStyle(fontSize: 18, fontFamily: 'MyFont'),
+                                  style: TextStyle(
+                                      fontSize: 18, fontFamily: 'MyFont'),
                                 ),
                                 TextButton(
                                   onPressed: () {
@@ -217,13 +209,14 @@ class _LoginPageState extends State<LoginPage> {
                   ),
                 ),
               ),
-            );
-
+            ),
+          );
         },
       ),
     );
   }
 }
+
 void showToast(String message) {
   Fluttertoast.showToast(
     msg: message,
@@ -235,5 +228,3 @@ void showToast(String message) {
     fontSize: 16.0,
   );
 }
-
-
